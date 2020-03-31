@@ -1,0 +1,28 @@
+{
+  "name": "rapid_math_tricks_and_tips_practice",
+  "version": "0.0.1",
+  "description": "Unofficial simple web app for practicing the tricks and tips taught in Edward H. Julius' book \"Rapid Math Tricks And Tips\"",
+  "private": true,
+  "scripts": {
+    "build": "tsc && webpack", 
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djmclaugh/RapidMathTricksAndTipsPractice.git"
+  },
+  "author": "",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/djmclaugh/RapidMathTricksAndTipsPractice/issues"
+  },
+  "homepage": "https://github.com/djmclaugh/RapidMathTricksAndTipsPractice#readme",
+  "devDependencies": {
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "vue": "^2.6.11"
+  }
+}
