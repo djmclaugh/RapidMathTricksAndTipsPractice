@@ -4,8 +4,8 @@
   "description": "Unofficial simple web app for practicing the tricks and tips taught in Edward H. Julius' book \"Rapid Math Tricks And Tips\"",
   "private": true,
   "scripts": {
-    "build": "tsc && webpack", 
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc && webpack",
+    "test": "tsc && mocha test --recursive"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,11 @@
   },
   "homepage": "https://github.com/djmclaugh/RapidMathTricksAndTipsPractice#readme",
   "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.9.8",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
