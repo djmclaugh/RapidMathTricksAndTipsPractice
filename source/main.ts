@@ -1,11 +1,11 @@
 import Vue from "vue";
 
-import {rootComponent} from "./components/root";
+import { RootComponent } from "./components/root"
 
 let v = new Vue({
   el: "#app",
   components: {
-    root: rootComponent
+    root: RootComponent
   },
   render: function(createElement) {
     return createElement("root");
