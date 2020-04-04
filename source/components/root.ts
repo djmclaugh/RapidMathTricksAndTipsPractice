@@ -1,13 +1,11 @@
 import Vue, { VNode } from "vue";
 
-import { QuestionCardComponent } from "./question_card"
-import { Question, QuestionType } from "../util/question"
+import { QuestionCardComponent } from "./question_card";
+import { Question, QuestionType } from "../util/question";
+import { generateQuestionForTrick1 } from "../util/question_generators/trick_1_generator";
 
 function createNewQuestion(): Question {
-  return {
-    type: QuestionType.ADDITION,
-    operands: [Math.round(Math.random() * 10), Math.round(Math.random() * 10)]
-  }
+  return generateQuestionForTrick1();
 }
 
 export const RootComponent = Vue.extend({
