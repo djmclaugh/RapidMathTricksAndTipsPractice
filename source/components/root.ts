@@ -3,9 +3,10 @@ import Vue, { VNode } from "vue";
 import { QuestionCardComponent } from "./question_card";
 import { Question, QuestionType } from "../util/question";
 import { generateQuestionForTrick1 } from "../util/question_generators/trick_1_generator";
+import { generateQuestionForTrick2 } from "../util/question_generators/trick_2_generator";
 
 function createNewQuestion(): Question {
-  return generateQuestionForTrick1();
+  return Math.random() < 0.5 ? generateQuestionForTrick1() : generateQuestionForTrick2();
 }
 
 export const RootComponent = Vue.extend({
