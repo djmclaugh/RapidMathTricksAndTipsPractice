@@ -12,7 +12,7 @@ const TRICK_NAMES: string[] = [
 export const OptionsComponent = Vue.extend({
   data: function() {
     return {
-      includeTrick: [false, false]
+      includeTrick: [false, false, false, false]
     }
   },
   computed: {

@@ -3,12 +3,8 @@ import Vue, { VNode } from "vue";
 import { QuestionCardComponent } from "./question_card";
 import { OptionsComponent } from "./options";
 import { Question, QuestionType } from "../util/question";
-import { generateQuestionForTrick1 } from "../util/question_generators/trick_1_generator";
-import { generateQuestionForTrick2 } from "../util/question_generators/trick_2_generator";
-
-function createNewQuestion(): Question {
-  return Math.random() < 0.5 ? generateQuestionForTrick1() : generateQuestionForTrick2();
-}
+import { randomInt } from "../util/random_util";
+import { GENERATORS } from "../util/question_generators/generators";
 
 interface RootComponentData {
   questions: Question[],
@@ -30,17 +26,16 @@ export const RootComponent = Vue.extend({
   },
   methods: {
     createNewQuestion(): Question {
-      const index = Math.floor(Math.random() * this.includedTrickGenerators.length);
+      const index = randomInt(this.includedTrickGenerators.length);
       const generator = this.includedTrickGenerators[index];
       return generator();
     },
     processStart(includeTrick: boolean[]): void {
       this.includedTrickGenerators = [];
-      if (includeTrick[0]) {
-        this.includedTrickGenerators.push(generateQuestionForTrick1);
-      }
-      if (includeTrick[1]) {
-        this.includedTrickGenerators.push(generateQuestionForTrick2);
+      for (let i = 0; i < includeTrick.length; ++i) {
+        if (includeTrick[i]) {
+          this.includedTrickGenerators.push(GENERATORS[i]);
+        }
       }
       this.questions = [this.createNewQuestion()];
       this.runNumber += 1;
