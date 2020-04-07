@@ -11,7 +11,7 @@ export const StatsComponent = Vue.extend({
       return this.attempts > 0 ? this.successes / this.attempts : 0
     },
     averageTime(): number {
-      return this.attempts > 0 ? this.totalTime / this.attempts : 0
+      return this.attempts > 0 ? this.totalTime / this.successes : 0
     },
   },
   render(createElement): VNode {
