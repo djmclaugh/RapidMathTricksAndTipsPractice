@@ -8,6 +8,8 @@ const TRICK_NAMES: string[] = [
   "Dividing by 4",
   "Multiplying by 5",
   "Dividing by 5",
+  "Square Number ending in 5",
+  "Multiply 2 digits by 11",
 ];
 
 if (TRICK_NAMES.length < GENERATORS.length) {
