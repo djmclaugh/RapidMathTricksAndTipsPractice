@@ -2,6 +2,7 @@ import Vue, { VNode } from "vue";
 
 import { QuestionCardComponent } from "./question_card";
 import { OptionsComponent } from "./options";
+import { StatsComponent } from "./stats";
 import { Question, QuestionType } from "../util/question";
 import { randomInt } from "../util/random_util";
 import { GENERATORS } from "../util/question_generators/generators";
@@ -10,6 +11,9 @@ interface RootComponentData {
   questions: Question[],
   includedTrickGenerators: Array<() => Question>,
   runNumber: number,
+  attempts: number,
+  successes: number,
+  startTime: number,
 }
 
 export const RootComponent = Vue.extend({
@@ -18,11 +22,15 @@ export const RootComponent = Vue.extend({
       questions: [],
       includedTrickGenerators: [],
       runNumber: 0,
+      attempts: 0,
+      successes: 0,
+      startTime: 0,
     }
   },
   components: {
     options: OptionsComponent,
-    questionCard: QuestionCardComponent
+    questionCard: QuestionCardComponent,
+    stats: StatsComponent
   },
   methods: {
     createNewQuestion(): Question {
@@ -32,6 +40,9 @@ export const RootComponent = Vue.extend({
     },
     processStart(includeTrick: boolean[]): void {
       this.includedTrickGenerators = [];
+      this.successes = 0;
+      this.attempts = 0;
+      this.startTime = Date.now();
       for (let i = 0; i < includeTrick.length; ++i) {
         if (includeTrick[i]) {
           this.includedTrickGenerators.push(GENERATORS[i]);
@@ -42,6 +53,8 @@ export const RootComponent = Vue.extend({
     },
     processCorrect(numberOfAttempts: number): void {
       this.questions.push(this.createNewQuestion());
+      this.attempts += numberOfAttempts;
+      this.successes += 1;
     },
   },
   render: function(createElement): VNode {
@@ -49,6 +62,14 @@ export const RootComponent = Vue.extend({
       on: {
         start: this.processStart,
       },
+    });
+
+    const statsElement: VNode = createElement("stats", {
+      props: {
+        attempts: this.attempts,
+        successes: this.successes,
+        totalTime: Date.now() - this.startTime,
+      }
     });
     const questionElements = [];
     for (let i = 0; i < this.questions.length; ++i) {
@@ -66,7 +87,7 @@ export const RootComponent = Vue.extend({
         key: this.runNumber + "-" + i,
       }));
     }
-    const elements = [optionsElement, createElement("div", questionElements)];
+    const elements = [optionsElement, statsElement, createElement("div", questionElements)];
     return createElement("div", elements);
   },
 });

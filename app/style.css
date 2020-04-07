@@ -3,3 +3,11 @@ body {
   font: sans-serif;
   background-color: #f9f9f9;
 }
+
+div {
+  margin: 4px;
+}
+
+span {
+  margin: 8px;
+}
