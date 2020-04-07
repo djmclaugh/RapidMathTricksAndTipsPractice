@@ -81,9 +81,6 @@ export const RootComponent = Vue.extend({
         on: {
           correct: this.processCorrect
         },
-        style: {
-          margin: "4px"
-        },
         key: this.runNumber + "-" + i,
       }));
     }

@@ -43,12 +43,6 @@ export const QuestionCardComponent = Vue.extend({
       const operands = this.question.operands;
       return operands[0] + " " + symboleForQuestionType(this.question.type) + " " + operands[1];
     },
-    borderColor(): string|undefined {
-      if (this.numberOfAttempts == 0) {
-        return undefined;
-      }
-      return this.isSolved ? "green" : "red";
-    },
     icon(): string|undefined {
       if (this.numberOfAttempts == 0) {
         return undefined;
@@ -86,8 +80,9 @@ export const QuestionCardComponent = Vue.extend({
 
     const anwserNode: VNode = createElement("input", {
       ref: anwserInputRef,
-      style: {
-        "border-color": this.borderColor
+      class: {
+        incorrect: this.numberOfAttempts > 0 && !this.isSolved,
+        correct: this.isSolved
       },
       attrs: {
         id: "anwser",
@@ -103,18 +98,17 @@ export const QuestionCardComponent = Vue.extend({
 
     for (let i = 0; i < this.numberOfAttempts - 1; ++i) {
       const resultIcon: VNode = createElement("span", {
-        style: {
-          color: "red",
-          "margin-left": "8px"
+        class: {
+          incorrect: true,
         }
       }, "✗")
       elements.push(resultIcon);
     }
     if (this.numberOfAttempts > 0) {
       const resultIcon: VNode = createElement("span", {
-        style: {
-          color: this.borderColor,
-          "margin-left": "8px"
+        class: {
+          incorrect: this.numberOfAttempts > 0 && !this.isSolved,
+          correct: this.isSolved
         }
       }, this.icon)
       elements.push(resultIcon);

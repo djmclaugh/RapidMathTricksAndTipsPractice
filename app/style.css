@@ -4,10 +4,26 @@ body {
   background-color: #f9f9f9;
 }
 
-div {
+label, input, div {
   margin: 4px;
 }
 
 span {
   margin: 8px;
+}
+
+span.incorrect {
+  color: red;
+}
+
+span.correct {
+  color: green;
+}
+
+input.incorrect {
+  border-color: red;
+}
+
+input.correct {
+  border-color: green;
 }
