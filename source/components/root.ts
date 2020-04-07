@@ -72,7 +72,7 @@ export const RootComponent = Vue.extend({
       }
     });
     const questionElements = [];
-    for (let i = 0; i < this.questions.length; ++i) {
+    for (let i = this.questions.length - 1; i >= 0; --i) {
       const question = this.questions[i];
       questionElements.push(createElement("question-card", {
         props: {
