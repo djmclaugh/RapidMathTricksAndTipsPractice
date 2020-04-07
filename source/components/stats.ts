@@ -19,7 +19,7 @@ export const StatsComponent = Vue.extend({
 
     elements.push(createElement("span", "Answered: " + this.successes));
     elements.push(createElement("span", "Accuracy: " + Math.floor(100 * this.accuracy) + "%"));
-    const timeText = "Average Time: " + Math.floor(this.averageTime / 1000) + " seconds";
+    const timeText = "Average Time: " + (Math.floor(this.averageTime / 100) / 10) + " seconds";
     elements.push(createElement("span", timeText));
 
     return createElement("div", elements);
