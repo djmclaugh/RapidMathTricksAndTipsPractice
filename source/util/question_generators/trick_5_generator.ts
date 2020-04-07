@@ -1,7 +1,7 @@
 import {Question, newMultiplication} from "../question";
 import {randomTwoDigitFactor} from "./generator_util";
 
-export function generateQuestionForTrick3(): Question {
+export function generateQuestionForTrick5(): Question {
   const x = randomTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(4, x) : newMultiplication(x, 4);
+  return Math.random() < 0.5 ? newMultiplication(5, x) : newMultiplication(x, 5);
 }

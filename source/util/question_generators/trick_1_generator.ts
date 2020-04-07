@@ -1,4 +1,4 @@
-import {Question, newMultiplication, newDivision, newDivisionFromMultiplication} from "../question";
+import {Question, newMultiplication, newDivisionFromMultiplication} from "../question";
 import {randomInt} from "../random_util";
 import {randomSimpleFactor} from "./generator_util";
 
@@ -30,23 +30,4 @@ function generateMultiplication(): Question {
 
 function generateDivision(): Question {
   return newDivisionFromMultiplication(generateMultiplication());
-}
-
-export function exerciseForTrick1(): Question[] {
-  return [
-    newMultiplication(40, 7),
-    newMultiplication(6, 800),
-    newMultiplication(500, 30),
-    newMultiplication(60, 900),
-    newMultiplication(70, 120),
-    newMultiplication(15, 150),
-    newMultiplication(400, 50),
-    newMultiplication(24, 400),
-    newDivision(3600, 900),
-    newDivision(5600, 7),
-    newDivision(5200, 130),
-    newDivision(800, 16),
-    newDivision(42000, 60),
-    newDivision(1800, 90),
-  ]
 }

@@ -1,4 +1,5 @@
 import Vue, { VNode } from "vue";
+import { GENERATORS } from "../util/question_generators/generators";
 
 const TRICK_NAMES: string[] = [
   "Multiplying and Dividing with Zeroes",
@@ -7,12 +8,17 @@ const TRICK_NAMES: string[] = [
   "Dividing by 4",
   "Multiplying by 5",
   "Dividing by 5",
-]
+];
+
+if (TRICK_NAMES.length < GENERATORS.length) {
+  throw new Error("Some tricks are missing display names");
+}
 
 export const OptionsComponent = Vue.extend({
   data: function() {
     return {
-      includeTrick: [false, false, false, false]
+      // Create an array with GENERATORS.length elements, all initialized to false.
+      includeTrick: GENERATORS.map(() => false),
     }
   },
   computed: {
