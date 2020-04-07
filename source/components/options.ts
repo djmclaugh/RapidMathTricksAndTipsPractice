@@ -2,14 +2,18 @@ import Vue, { VNode } from "vue";
 import { GENERATORS } from "../util/question_generators/generators";
 
 const TRICK_NAMES: string[] = [
-  "Multiplying and Dividing with Zeroes",
-  "Multiplying and Dividing with Decimal Points",
+  "Multiplying and dividing with zeroes",
+  "Multiplying and dividing with decimal points",
   "Multiplying by 4",
   "Dividing by 4",
   "Multiplying by 5",
   "Dividing by 5",
-  "Square Number ending in 5",
+  "Square a number ending in 5",
   "Multiply 2 digits by 11",
+  "Multiplying by 25",
+  "Dividing by 25",
+  "Multiplying a one/two digit number by 99",
+  "Multiplying a one/two digit number by 101",
 ];
 
 if (TRICK_NAMES.length < GENERATORS.length) {

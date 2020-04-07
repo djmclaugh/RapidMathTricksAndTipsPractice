@@ -7,6 +7,10 @@ import {generateQuestionForTrick5} from "./trick_5_generator";
 import {generateQuestionForTrick6} from "./trick_6_generator";
 import {generateQuestionForTrick7} from "./trick_7_generator";
 import {generateQuestionForTrick8} from "./trick_8_generator";
+import {generateQuestionForTrick9} from "./trick_9_generator";
+import {generateQuestionForTrick10} from "./trick_10_generator";
+import {generateQuestionForTrick11} from "./trick_11_generator";
+import {generateQuestionForTrick12} from "./trick_12_generator";
 
 export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick1,
@@ -17,4 +21,8 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick6,
   generateQuestionForTrick7,
   generateQuestionForTrick8,
+  generateQuestionForTrick9,
+  generateQuestionForTrick10,
+  generateQuestionForTrick11,
+  generateQuestionForTrick12,
 ]
