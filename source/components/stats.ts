@@ -1,5 +1,11 @@
 import Vue, { VNode } from "vue";
 
+const groupedSpanData = {
+  class: {
+    nobreak: true
+  }
+}
+
 export const StatsComponent = Vue.extend({
   props: {
     attempts: Number,
@@ -17,10 +23,13 @@ export const StatsComponent = Vue.extend({
   render(createElement): VNode {
     const elements: VNode[] = [];
 
-    elements.push(createElement("span", "Answered: " + this.successes));
-    elements.push(createElement("span", "Accuracy: " + Math.floor(100 * this.accuracy) + "%"));
+    elements.push(createElement("span", groupedSpanData, "Answered: " + this.successes));
+
+    const accuracyText = "Accuracy: " + Math.floor(100 * this.accuracy) + "%"
+    elements.push(createElement("span", groupedSpanData, accuracyText));
+
     const timeText = "Average Time: " + (Math.floor(this.averageTime / 100) / 10) + " seconds";
-    elements.push(createElement("span", timeText));
+    elements.push(createElement("span", groupedSpanData, timeText));
 
     return createElement("div", elements);
   },

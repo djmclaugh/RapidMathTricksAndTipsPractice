@@ -12,6 +12,10 @@ span {
   margin: 8px;
 }
 
+span.nobreak {
+  display: inline-block;
+}
+
 span.incorrect {
   color: red;
 }
