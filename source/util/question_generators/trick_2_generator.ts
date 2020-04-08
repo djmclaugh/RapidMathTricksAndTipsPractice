@@ -6,6 +6,7 @@ import {randomSimpleFactor} from "./generator_util";
 // Using the same ratio as the book.
 const MULTIPLICATION_TO_DIVISION_RATIO = 8/14
 
+// Multiplying and dividing with decimal points
 export function generateQuestionForTrick2(): Question {
   return Math.random() < MULTIPLICATION_TO_DIVISION_RATIO ?
       generateMultiplication() : generateDivision();
