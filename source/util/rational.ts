@@ -21,18 +21,20 @@ export class Rational {
     this.divisor /= factor;
   }
 
-  public toNumber() {
+  public isInteger(): boolean {
+    return this.divisor == 1;
+  }
+
+  public toNumber(): number {
     return this.dividend / this.divisor;
   }
 
   public static fromNumber(x: number): Rational {
-    let dividend = x;
-    let divisor = 1;
-    while (!Number.isInteger(dividend)) {
-      dividend *= 10;
-      divisor *= 10;
+    if (Number.isInteger(x)) {
+      return new Rational(x, 1);
     }
-    return new Rational(dividend, divisor);
+    let parts = x.toString().split(".");
+    return new Rational(parseInt(parts[0] + parts[1]), Math.pow(10, parts[1].length));
   }
 
   public static add(a: Rational, b: Rational) {

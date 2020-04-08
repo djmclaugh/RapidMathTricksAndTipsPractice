@@ -1,24 +1,29 @@
 import Vue, { VNode } from "vue";
-import { Question, QuestionType, getAnwser } from "../util/question";
+import { Question, QuestionType, getBooleanAnswer, getNumberAnswer, QUESTION_TYPES_WITH_BOOLEAN_ANSWER, QUESTION_TYPES_WITH_NUMBER_ANSWER } from "../util/question";
 
-const anwserInputRef = "QUESTIONT_CARD_COMPONENT_ANWSER";
+const answerInputRef = "QUESTIONT_CARD_COMPONENT_ANSWER";
 
 function assertNever(x: never): never {
     throw new Error("Unexpected object: " + x);
 }
 
-function symboleForQuestionType(type: QuestionType): string {
-  switch(type) {
+function stringForQuestion(question: Question): string {
+  const operands = question.operands;
+  switch(question.type) {
     case QuestionType.ADDITION:
-      return "+";
+      return `${operands[0]} + ${operands[1]}`;
     case QuestionType.SUBTRACTION:
-      return "-";
+      return `${operands[0]} - ${operands[1]}`;
     case QuestionType.MULTIPLICATION:
-      return "*";
+      return `${operands[0]} * ${operands[1]}`;
     case QuestionType.DIVISION:
-      return "/";
+      return `${operands[0]} / ${operands[1]}`;
+    case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
+      return `${operands[0]} * ${operands[1]} ≟ ${operands[2]}`;
+    case QuestionType.DIVISION_DIGIT_SUM_CHECK:
+      return `${operands[0]} / ${operands[1]} ≟ ${operands[2]}`;
     default:
-      return assertNever(type);
+      return assertNever(question.type);
   }
 }
 
@@ -36,12 +41,8 @@ export const QuestionCardComponent = Vue.extend({
     question(): Question {
       return this.questionData as Question;
     },
-    anwser(): number {
-      return getAnwser(this.question);
-    },
     questionText(): string {
-      const operands = this.question.operands;
-      return operands[0] + " " + symboleForQuestionType(this.question.type) + " " + operands[1];
+      return stringForQuestion(this.question);
     },
     icon(): string|undefined {
       if (this.numberOfAttempts == 0) {
@@ -51,50 +52,61 @@ export const QuestionCardComponent = Vue.extend({
     }
   },
   methods: {
-    checkAnwser(event: any): void {
+    checkAnswer(event: any): void {
       this.numberOfAttempts += 1;
-      const value = event.target.valueAsNumber;
-      if (value == this.anwser) {
+      let isCorrect: boolean;
+
+      const type: QuestionType = this.question.type;
+      if (QUESTION_TYPES_WITH_NUMBER_ANSWER.includes(type)) {
+        const value = event.target.valueAsNumber;
+        isCorrect = value === getNumberAnswer(this.question);
+      } else if (QUESTION_TYPES_WITH_BOOLEAN_ANSWER.includes(type)) {
+        throw new Error(`checkAnswer does not know how to verify questions that expect a boolan answer`);
+      } else {
+        throw new Error(`checkAnswer does not know how to verify questions of type ${type}`);
+      }
+
+      if (isCorrect) {
         this.isSolved = true;
         this.$emit("correct", this.numberOfAttempts);
       } else {
         this.$emit("incorrect", this.numberOfAttempts);
-        const anwserInput: HTMLInputElement = this.$refs[anwserInputRef] as HTMLInputElement;
-        anwserInput.select();
+        const answerInput: HTMLInputElement = this.$refs[answerInputRef] as HTMLInputElement;
+        answerInput.select();
       }
     }
   },
   mounted(): void {
-    const anwserInput: HTMLElement = this.$refs[anwserInputRef] as HTMLElement;
-    anwserInput.focus();
+    const answerInput: HTMLElement = this.$refs[answerInputRef] as HTMLElement;
+    answerInput.focus();
   },
   render(createElement): VNode {
     const elements: VNode[] = [];
 
     const questionTextNode: VNode = createElement("label", {
       attrs: {
-        for: "anwser"
+        for: "answer"
       }
     }, this.questionText + ": ");
     elements.push(questionTextNode);
 
-    const anwserNode: VNode = createElement("input", {
-      ref: anwserInputRef,
+    const answerNode: VNode = createElement("input", {
+      ref: answerInputRef,
       class: {
         incorrect: this.numberOfAttempts > 0 && !this.isSolved,
         correct: this.isSolved
       },
       attrs: {
-        id: "anwser",
+        id: "answer",
         type: "number",
         step: "any",
         disabled: this.isSolved
       },
       on: {
-        change: this.checkAnwser
+        change: this.checkAnswer
       }
     });
-    elements.push(anwserNode)
+    elements.push(answerNode)
 
     for (let i = 0; i < this.numberOfAttempts - 1; ++i) {
       const resultIcon: VNode = createElement("span", {
