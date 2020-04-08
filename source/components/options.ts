@@ -15,6 +15,7 @@ const TRICK_NAMES: string[] = [
   "Multiplying a one/two digit number by 99",
   "Multiplying a one/two digit number by 101",
   "Multiplying two numbers whose difference is 2",
+  "Check multiplications and divisions",
 ];
 
 if (TRICK_NAMES.length < GENERATORS.length) {

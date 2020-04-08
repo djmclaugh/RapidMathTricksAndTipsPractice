@@ -52,7 +52,7 @@ export function newMultiplicationDigitSumCheck(a: number, b: number, product: nu
 }
 
 export function newDivisionDigitSumCheck(a: number, b: number, quotient: number) {
-  return {type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK, operands: [a, b, quotient]};
+  return {type: QuestionType.DIVISION_DIGIT_SUM_CHECK, operands: [a, b, quotient]};
 }
 
 export function newDivisionFromMultiplication(multiplication: Question): Question {

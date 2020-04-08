@@ -4,6 +4,7 @@ import {randomTwoDigitFactor, randomNonTrivialTwoDigitFactor, TRICKY_SQUARE_ROOT
 
 import {generateQuestionForTrick1} from "./trick_1_generator";
 import {generateQuestionForTrick2} from "./trick_2_generator";
+import {generateQuestionForTrick14} from "./trick_14_generator";
 
 // Multiplying by 4
 export function generateQuestionForTrick3(): Question {
@@ -89,4 +90,5 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick11,
   generateQuestionForTrick12,
   generateQuestionForTrick13,
+  generateQuestionForTrick14,
 ]
