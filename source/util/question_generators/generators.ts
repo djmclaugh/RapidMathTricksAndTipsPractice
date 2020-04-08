@@ -1,6 +1,6 @@
 import {Question, newMultiplication, newDivision} from "../question";
-import {randomInt} from "../random_util";
-import {randomTwoDigitFactor, randomNonTrivialTwoDigitFactor} from "./generator_util";
+import {randomInt, randomFromArray} from "../random_util";
+import {randomTwoDigitFactor, randomNonTrivialTwoDigitFactor, TRICKY_SQUARE_ROOTS, SIMPLE_FACTORS} from "./generator_util";
 
 import {generateQuestionForTrick1} from "./trick_1_generator";
 import {generateQuestionForTrick2} from "./trick_2_generator";
@@ -64,6 +64,17 @@ export function generateQuestionForTrick12(): Question {
   return Math.random() < 0.5 ? newMultiplication(101, x) : newMultiplication(x, 101);
 }
 
+// Multiplying two numbers whose difference is 2
+// We either want a tricky number to square, or an easy number to square that has been multiplied
+// by 10.
+const ROOTS_FOR_TRICK_13: number[] = TRICKY_SQUARE_ROOTS.concat(
+  SIMPLE_FACTORS.map((x) => x * 10).filter((x) => !TRICKY_SQUARE_ROOTS.includes(x))
+);
+export function generateQuestionForTrick13(): Question {
+  const x = randomFromArray(ROOTS_FOR_TRICK_13);
+  return Math.random() < 0.5 ? newMultiplication(x - 1, x + 1) : newMultiplication(x + 1, x - 1);
+}
+
 export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick1,
   generateQuestionForTrick2,
@@ -77,4 +88,5 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick10,
   generateQuestionForTrick11,
   generateQuestionForTrick12,
+  generateQuestionForTrick13,
 ]

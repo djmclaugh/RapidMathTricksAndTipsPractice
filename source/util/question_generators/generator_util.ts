@@ -1,18 +1,34 @@
-import {randomInt} from "../random_util";
+import {randomInt, randomFromArray} from "../random_util";
 
-/**
- * Returns a uniformly random integer from the interval [2, 9] + [11, 12].
- * The times table up to 12 is assumed to be known by heart.
- * 0, 1, and 10 are removed because they are too easy to multiply.
- * These numbers are considered the simplest possible to multiply without being trivial.
- */
-export function randomSimpleFactor() {
-  let result = 2 + randomInt(10);  // [2, 11]
-  if (result >= 10) {
-    result += 1;
-  }
-  return result;
+// Powers of 10 are considered trivial to multiply since they don't change the digits of the
+// multiplicand (only their positions).
+export function isTrivialFactor(x: number): boolean {
+  return Math.log10(x) % 1 == 0;
 }
+
+// Numbers that appear in the 12 by 12 times table that is assumed to be known by heart.
+export const TIME_TABLE_FACTORS: number[] = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+];
+
+// Numbers that appear in the squares table that is assumed to be known by heart.
+export const SQUARES_TABLE: number[] = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+];
+
+// Numbers that are in the times table but are not trivial.
+export const SIMPLE_FACTORS: number[] = TIME_TABLE_FACTORS.filter((x) => !isTrivialFactor(x));
+
+export function randomSimpleFactor() {
+  return randomFromArray(SIMPLE_FACTORS);
+}
+
+// Numbers that are in the squares table but are not trivial.
+export const SIMPLE_SQUARE_ROOTS: number[] = SQUARES_TABLE.filter((x) => !isTrivialFactor(x));
+
+// Numbers that are in the sqares table but are not a simple factor.
+export const TRICKY_SQUARE_ROOTS: number[] =
+    SIMPLE_SQUARE_ROOTS.filter((x) => !SIMPLE_FACTORS.includes(x));
 
 /**
  * Returns a uniformly random integer from the interval [2, 9] + [11, 99].
