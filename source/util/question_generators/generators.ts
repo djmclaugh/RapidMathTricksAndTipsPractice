@@ -1,6 +1,6 @@
 import {Question, newMultiplication, newDivision} from "../question";
 import {randomInt, randomFromArray} from "../random_util";
-import {randomTwoDigitFactor, randomNonTrivialTwoDigitFactor, TRICKY_SQUARE_ROOTS, SIMPLE_FACTORS} from "./generator_util";
+import {randomSimpleFactor, randomTwoDigitFactor, randomNonTrivialTwoDigitFactor, TRICKY_SQUARE_ROOTS, SIMPLE_FACTORS} from "./generator_util";
 
 import {generateQuestionForTrick1} from "./trick_1_generator";
 import {generateQuestionForTrick2} from "./trick_2_generator";
@@ -76,6 +76,36 @@ export function generateQuestionForTrick13(): Question {
   return Math.random() < 0.5 ? newMultiplication(x - 1, x + 1) : newMultiplication(x + 1, x - 1);
 }
 
+// Multiplying by 125
+export function generateQuestionForTrick15(): Question {
+  const x = (1 + randomInt(60)) * 4;
+  return Math.random() < 0.5 ? newMultiplication(125, x) : newMultiplication(x, 125);
+}
+
+// Dividing by 125
+export function generateQuestionForTrick16(): Question {
+  const x = randomSimpleFactor() * randomFromArray([10, 100, 1000]);
+  return newDivision(x, 125);
+}
+
+// Multiplying by 9
+export function generateQuestionForTrick17(): Question {
+  const x = randomNonTrivialTwoDigitFactor();
+  return Math.random() < 0.5 ? newMultiplication(9, x) : newMultiplication(x, 9);
+}
+
+// Multiplying by 12
+export function generateQuestionForTrick18(): Question {
+  const x = randomNonTrivialTwoDigitFactor();
+  return Math.random() < 0.5 ? newMultiplication(12, x) : newMultiplication(x, 12);
+}
+
+// Multiplying by 15
+export function generateQuestionForTrick19(): Question {
+  const x = (4 + randomInt(40)) * 2;
+  return Math.random() < 0.5 ? newMultiplication(15, x) : newMultiplication(x, 15);
+}
+
 export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick1,
   generateQuestionForTrick2,
@@ -91,4 +121,9 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick12,
   generateQuestionForTrick13,
   generateQuestionForTrick14,
+  generateQuestionForTrick15,
+  generateQuestionForTrick16,
+  generateQuestionForTrick17,
+  generateQuestionForTrick18,
+  generateQuestionForTrick19,
 ]
