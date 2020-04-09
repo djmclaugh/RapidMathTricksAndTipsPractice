@@ -3,7 +3,7 @@ import {randomInt, randomFromArray} from "../random_util";
 // Powers of 10 are considered trivial to multiply since they don't change the digits of the
 // multiplicand (only their positions).
 export function isTrivialFactor(x: number): boolean {
-  return Math.log10(x) % 1 == 0;
+  return x == 0 || Math.log10(x) % 1 == 0;
 }
 
 // Numbers that appear in the 12 by 12 times table that is assumed to be known by heart.
