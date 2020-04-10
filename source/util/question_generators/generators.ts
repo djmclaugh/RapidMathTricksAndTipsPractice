@@ -106,6 +106,45 @@ export function generateQuestionForTrick19(): Question {
   return Math.random() < 0.5 ? newMultiplication(15, x) : newMultiplication(x, 15);
 }
 
+// Multiplying numbers with a special relationship
+// The special relationship is the same tens digit and ones digits that add up to 10.
+export function generateQuestionForTrick20(): Question {
+  const tensDigit = (1 + randomInt(9)) * 10;
+  const onesDigit = 1 + randomInt(9);
+  return newMultiplication(tensDigit + onesDigit, tensDigit + (10 - onesDigit));
+}
+
+// Multiplying by x.5
+export function generateQuestionForTrick21(): Question {
+  const a = (1 + randomInt(9)) + 0.5;
+  let b: number;
+  if ([3, 5, 9, 11, 15].includes(a * 2)) {
+    b = randomTwoDigitFactor() * 2;
+  } else if (a * 2 == 7) {
+    b = randomSimpleFactor() * 2;
+  } else if ([13, 17, 19].includes(a * 2)) {
+    b = randomFromArray([2, 3, 4]) * 2
+  } else {
+    console.log("this should never happen");
+    b = randomTwoDigitFactor() * 2;
+  }
+  return Math.random() < 0.5 ? newMultiplication(a, b) : newMultiplication(b, a);
+}
+
+export function generateQuestionForTrick22(): Question {
+  const divisor = (1 + randomInt(9)) + 0.5;
+  let quotient: number;
+  if ([3, 5, 7, 9, 11, 15].includes(divisor * 2)) {
+    quotient = randomSimpleFactor();
+  } else if ([13, 17, 19].includes(divisor * 2)) {
+    quotient = randomFromArray([2, 3, 4]);
+  } else {
+    console.log("this should never happen");
+    quotient = randomSimpleFactor() * 2;
+  }
+  return newDivision(quotient * divisor, divisor);
+}
+
 export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick1,
   generateQuestionForTrick2,
@@ -126,4 +165,7 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick17,
   generateQuestionForTrick18,
   generateQuestionForTrick19,
+  generateQuestionForTrick20,
+  generateQuestionForTrick21,
+  generateQuestionForTrick22,
 ]

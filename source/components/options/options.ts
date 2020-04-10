@@ -23,6 +23,9 @@ const TRICK_NAMES: string[] = [
   "Multiplying by 9",
   "Multiplying by 12",
   "Multiplying by 15",
+  "Multiplying numbers with a special relationship",
+  "Multiplying by x.5",
+  "Dividing by x.5",
 ];
 
 enum TrickSelectorType {
