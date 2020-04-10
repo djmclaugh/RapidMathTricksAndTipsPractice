@@ -34,6 +34,7 @@ const TRICK_NAMES: string[] = [
 
 enum TrickSelectorType {
   SINGLE_TRICK,
+  ALL_TRICKS_UP_TO,
   MULTIPLE_TRICKS,
 }
 
@@ -74,6 +75,7 @@ export const OptionsComponent = Vue.extend({
       this.trickSelectorType = type;
       switch(this.trickSelectorType) {
         case TrickSelectorType.SINGLE_TRICK:
+        case TrickSelectorType.ALL_TRICKS_UP_TO:
           const singleTrickComponent: any = this.$refs[singleSelectorRef];
           this.updateSelectedTrick(singleTrickComponent.selectedTrick);
           break;
@@ -85,7 +87,18 @@ export const OptionsComponent = Vue.extend({
     },
     updateSelectedTrick(selectedTrick: number): void {
       this.includedTricks = GENERATORS.map(() => false);
-      this.includedTricks[selectedTrick] = true;
+      switch (this.trickSelectorType) {
+        case TrickSelectorType.SINGLE_TRICK:
+          this.includedTricks[selectedTrick] = true;
+          break;
+        case TrickSelectorType.ALL_TRICKS_UP_TO:
+          for (let i = 0; i <= selectedTrick; ++i) {
+            this.includedTricks[i] = true;
+          }
+          break;
+        default:
+          throw new Error("updateSelectedTrick should only be called if the trick selection type is SINGLE_TRICK or ALL_TRICKS_UP_TO");
+      }
     },
     updateIncludedTricks(includedTricks: boolean[]): void {
       this.includedTricks = includedTricks;
@@ -122,6 +135,24 @@ export const OptionsComponent = Vue.extend({
 
     elements.push(createElement("input", {
       attrs: {
+        id: "selector_type_all_tricks_up_to_radio",
+        name: "selector_type",
+        type: "radio",
+        value: TrickSelectorType.ALL_TRICKS_UP_TO,
+        checked: this.trickSelectorType == TrickSelectorType.ALL_TRICKS_UP_TO,
+      },
+      on: {
+        change: this.processSelectorTypeSelection,
+      },
+    }));
+    elements.push(createElement("label", {
+      attrs: {
+        for: "selector_type_all_tricks_up_to_radio",
+      }
+    }, "Practice All Tricks Up To"));
+
+    elements.push(createElement("input", {
+      attrs: {
         id: "selector_type_multiple_tricks_radio",
         name: "selector_type",
         type: "radio",
@@ -146,7 +177,10 @@ export const OptionsComponent = Vue.extend({
         optionsArray: TRICK_NAMES,
       },
       attrs: {
-        hidden: this.trickSelectorType !== TrickSelectorType.SINGLE_TRICK,
+        hidden: ![
+          TrickSelectorType.SINGLE_TRICK,
+          TrickSelectorType.ALL_TRICKS_UP_TO
+        ].includes(this.trickSelectorType),
       },
       on: {
         updateSelectedTrick: this.updateSelectedTrick
