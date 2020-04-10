@@ -26,6 +26,10 @@ const TRICK_NAMES: string[] = [
   "Multiplying numbers with a special relationship",
   "Multiplying by x.5",
   "Dividing by x.5",
+  "Square two digit number starting with a 5",
+  "Square two digit number ending with a 1",
+  "Two digit numbers",
+  "Multiplying two numbers whose difference is 4",
 ];
 
 enum TrickSelectorType {

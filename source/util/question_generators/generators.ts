@@ -145,6 +145,35 @@ export function generateQuestionForTrick22(): Question {
   return newDivision(quotient * divisor, divisor);
 }
 
+// Square two digit number starting with a 5
+export function generateQuestionForTrick23(): Question {
+  const x = randomFromArray([51, 52, 53, 54, 55, 56, 57, 58, 59]);
+  return newMultiplication(x, x);
+}
+
+// Square two digit number starting ending a 1
+export function generateQuestionForTrick24(): Question {
+  const x = randomFromArray([11, 21, 31, 41, 51, 61, 71, 81, 91]);
+  return newMultiplication(x, x);
+}
+
+// Multiply 2 digit numbers
+export function generateQuestionForTrick25(): Question {
+  return newMultiplication(randomNonTrivialTwoDigitFactor(), randomNonTrivialTwoDigitFactor());
+}
+
+// Multiplying two numbers whose difference is 4
+// For now, we either want a tricky number to square, or an easy number to square that has been
+// multiplied by 10. But like in the book, maybe we want to include numbers that either end in 1s
+// or 5s since the user probably knows tricks 7 and 24.
+const ROOTS_FOR_TRICK_26: number[] = TRICKY_SQUARE_ROOTS.concat(
+  SIMPLE_FACTORS.map((x) => x * 10).filter((x) => !TRICKY_SQUARE_ROOTS.includes(x))
+);
+export function generateQuestionForTrick26(): Question {
+  const x = randomFromArray(ROOTS_FOR_TRICK_26);
+  return Math.random() < 0.5 ? newMultiplication(x - 2, x + 2) : newMultiplication(x + 2, x - 2);
+}
+
 export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick1,
   generateQuestionForTrick2,
@@ -168,4 +197,8 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick20,
   generateQuestionForTrick21,
   generateQuestionForTrick22,
+  generateQuestionForTrick23,
+  generateQuestionForTrick24,
+  generateQuestionForTrick25,
+  generateQuestionForTrick26,
 ]
