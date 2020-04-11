@@ -1,5 +1,6 @@
 import Vue, { CreateElement, VNode } from "vue";
 import { Question, QuestionType, getBooleanAnswer, getNumberAnswer, QUESTION_TYPES_WITH_BOOLEAN_ANSWER, QUESTION_TYPES_WITH_NUMBER_ANSWER } from "../util/question";
+import { RadioGroupComponent } from "./shared/radio_group";
 
 const answerInputRef = "QUESTIONT_CARD_COMPONENT_ANSWER";
 
@@ -48,6 +49,9 @@ function inputTypeForQuestion(question: Question): InputType {
 }
 
 export const QuestionCardComponent = Vue.extend({
+  components: {
+    radioGroup: RadioGroupComponent,
+  },
   data: function() {
     return {
       isSolved: false,
@@ -76,18 +80,22 @@ export const QuestionCardComponent = Vue.extend({
     },
   },
   methods: {
-    checkAnswer(event: any): void {
+    processNumberAnswer(event: any): void {
+      this.checkAnswer(event.target.valueAsNumber);
+    },
+    processBooleanAnswer(selection: string): void {
+      this.checkAnswer(selection === "true");
+    },
+    checkAnswer(answer: boolean|number): void {
       this.numberOfAttempts += 1;
       let isCorrect: boolean;
 
       switch(this.questionInputType) {
         case InputType.NUMBER:
-          const numberValue = event.target.valueAsNumber;
-          isCorrect = numberValue === getNumberAnswer(this.question);
+          isCorrect = answer === getNumberAnswer(this.question);
           break;
         case InputType.POSSIBLY_CORRECT_OR_DEFINITLY_INCORRECT:
-          const boolValue = event.target.value === "true";
-          isCorrect = boolValue === getBooleanAnswer(this.question);
+          isCorrect = answer === getBooleanAnswer(this.question);
           break;
         default:
           return assertNever(this.questionInputType);
@@ -110,11 +118,6 @@ export const QuestionCardComponent = Vue.extend({
         correct: this.isSolved
       };
     },
-    getInputOn() {
-      return {
-        change: this.checkAnswer
-      };
-    },
     createInputNode(createElement: CreateElement): VNode {
       switch(this.questionInputType) {
         case InputType.NUMBER:
@@ -135,49 +138,29 @@ export const QuestionCardComponent = Vue.extend({
           step: "any",
           disabled: this.isSolved
         },
-        on: this.getInputOn(),
+        on: {
+          change: this.processNumberAnswer
+        },
       });
     },
     createPossiblyCorrectOrDefinitlyIncorrectInputNode(createElement: CreateElement): VNode {
-      const label1 = createElement("label", {
-        attrs: {
-          for: "possibly_correct_button_" + this.id,
-        }
-      }, "Possibly Correct");
-      const option1 = createElement("input", {
-        class: this.getCorrectnessClass(),
-        attrs: {
-          id: "possibly_correct_button_" + this.id,
+      return createElement("radioGroup", {
+        props: {
           name: "answer_" + this.id,
-          type: "radio",
-          value: "true",
-          disabled: this.isSolved
+          values: [
+            "true",
+            "false",
+          ],
+          valueDisplayNames: [
+            "Possibly Correct",
+            "Definitly Incorrect",
+          ],
+          disabled: this.isSolved,
         },
-        on: this.getInputOn(),
-      });
-
-      const label2 = createElement("label", {
-        attrs: {
-          for: "definitly_incorect_button_" + this.id,
-        }
-      }, "Definitly Incorrect");
-      const option2 = createElement("input", {
-        class: this.getCorrectnessClass(),
-        attrs: {
-          id: "definitly_incorect_button_" + this.id,
-          name: "answer_" + this.id,
-          type: "radio",
-          value: "false",
-          disabled: this.isSolved
+        on: {
+          change: this.processBooleanAnswer,
         },
-        on: this.getInputOn(),
       });
-
-      return createElement("span", {
-        class: {
-          nobreak: true
-        }
-      }, [label1, option1, label2, option2]);
     },
   },
   mounted(): void {

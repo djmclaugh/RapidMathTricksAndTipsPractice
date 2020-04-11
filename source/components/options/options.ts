@@ -2,6 +2,7 @@ import Vue, { VNode } from "vue";
 import { GENERATORS } from "../../util/question_generators/generators";
 import { SingleTrickSelectorComponent } from "./single_trick_selector";
 import { MultipleTricksSelectorComponent } from "./multiple_tricks_selector";
+import { RadioGroupComponent } from "../shared/radio_group";
 
 const TRICK_NAMES: string[] = [
   "Multiplying and dividing with zeroes",
@@ -49,6 +50,7 @@ export const OptionsComponent = Vue.extend({
   components: {
     singleSelector: SingleTrickSelectorComponent,
     multipleSelector: MultipleTricksSelectorComponent,
+    radioGroup: RadioGroupComponent,
   },
   data: function() {
     return {
@@ -68,8 +70,8 @@ export const OptionsComponent = Vue.extend({
     },
   },
   methods: {
-    processSelectorTypeSelection(event: any): void {
-      this.updateSelectorType(parseInt(event.target.value));
+    processSelectorTypeSelection(selection: string): void {
+      this.updateSelectorType(parseInt(selection));
     },
     updateSelectorType(type: TrickSelectorType): void {
       this.trickSelectorType = type;
@@ -115,59 +117,25 @@ export const OptionsComponent = Vue.extend({
 
     elements.push(createElement("legend", "Options"));
 
-    elements.push(createElement("input", {
-      attrs: {
-        id: "selector_type_single_trick_radio",
+    elements.push(createElement("radioGroup", {
+      props: {
         name: "selector_type",
-        type: "radio",
-        value: TrickSelectorType.SINGLE_TRICK,
-        checked: this.trickSelectorType == TrickSelectorType.SINGLE_TRICK,
+        values: [
+          "" + TrickSelectorType.SINGLE_TRICK,
+          "" + TrickSelectorType.ALL_TRICKS_UP_TO,
+          "" + TrickSelectorType.MULTIPLE_TRICKS,
+        ],
+        valueDisplayNames: [
+          "Practice Single Trick",
+          "Practice All Tricks Up To",
+          "Practice Multiple Tricks",
+        ],
+        initialValue: "" + this.trickSelectorType,
       },
       on: {
         change: this.processSelectorTypeSelection,
       },
     }));
-    elements.push(createElement("label", {
-      attrs: {
-        for: "selector_type_single_trick_radio",
-      }
-    }, "Practice Single Trick"));
-
-    elements.push(createElement("input", {
-      attrs: {
-        id: "selector_type_all_tricks_up_to_radio",
-        name: "selector_type",
-        type: "radio",
-        value: TrickSelectorType.ALL_TRICKS_UP_TO,
-        checked: this.trickSelectorType == TrickSelectorType.ALL_TRICKS_UP_TO,
-      },
-      on: {
-        change: this.processSelectorTypeSelection,
-      },
-    }));
-    elements.push(createElement("label", {
-      attrs: {
-        for: "selector_type_all_tricks_up_to_radio",
-      }
-    }, "Practice All Tricks Up To"));
-
-    elements.push(createElement("input", {
-      attrs: {
-        id: "selector_type_multiple_tricks_radio",
-        name: "selector_type",
-        type: "radio",
-        value: TrickSelectorType.MULTIPLE_TRICKS,
-        checked: this.trickSelectorType == TrickSelectorType.MULTIPLE_TRICKS,
-      },
-      on: {
-        change: this.processSelectorTypeSelection,
-      },
-    }));
-    elements.push(createElement("label", {
-      attrs: {
-        for: "selector_type_multiple_tricks_radio",
-      }
-    }, "Practice Multiple Tricks"));
 
     elements.push(createElement("br"));
 
