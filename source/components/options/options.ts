@@ -31,6 +31,8 @@ const TRICK_NAMES: string[] = [
   "Square two digit number ending with a 1",
   "Two digit numbers",
   "Multiplying two numbers whose difference is 4",
+  "Multiply in two steps",
+  "Multiply numbers just over 100",
 ];
 
 enum TrickSelectorType {

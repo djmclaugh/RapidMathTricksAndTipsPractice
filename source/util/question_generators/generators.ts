@@ -174,6 +174,18 @@ export function generateQuestionForTrick26(): Question {
   return Math.random() < 0.5 ? newMultiplication(x - 2, x + 2) : newMultiplication(x + 2, x - 2);
 }
 
+// Multiply in two steps
+export function generateQuestionForTrick27(): Question {
+  return newMultiplication(randomSimpleFactor(), randomFromArray([7, 8, 9, 11, 12]) * 2);
+}
+
+// Multiply numbers just over 100
+export function generateQuestionForTrick28(): Question {
+  const a = 101 + randomInt(9);
+  const b = 101 + randomInt(9);
+  return newMultiplication(a, b);
+}
+
 export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick1,
   generateQuestionForTrick2,
@@ -201,4 +213,6 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick24,
   generateQuestionForTrick25,
   generateQuestionForTrick26,
+  generateQuestionForTrick27,
+  generateQuestionForTrick28,
 ]
