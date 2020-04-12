@@ -4,19 +4,28 @@ import { assert } from "chai";
 
 describe("Question", () => {
   describe("getNumberAnswer", () => {
-    it("addition", () => {
-      assert.equal(getNumberAnswer({
-        type: QuestionType.ADDITION,
-        operands: [2, 2]
-      }), 4);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.ADDITION,
-        operands: [-4, 10]
-      }), 6);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.ADDITION,
-        operands: [0.2, 0.7]
-      }), 0.9);
+    describe("sum", () => {
+       it("add two numbers", () => {
+        assert.equal(getNumberAnswer({
+          type: QuestionType.SUM,
+          operands: [2, 2]
+        }), 4);
+        assert.equal(getNumberAnswer({
+          type: QuestionType.SUM,
+          operands: [-4, 10]
+        }), 6);
+        assert.equal(getNumberAnswer({
+          type: QuestionType.SUM,
+          operands: [0.2, 0.7]
+        }), 0.9);
+      });
+
+      it("add multiple numbers", () => {
+        assert.equal(getNumberAnswer({
+          type: QuestionType.SUM,
+          operands: [2, 2, -4, 10, 0.2, 0.7]
+        }), 10.9);
+      });
     });
 
     it("subtraction", () => {

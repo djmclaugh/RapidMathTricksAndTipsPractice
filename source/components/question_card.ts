@@ -16,14 +16,14 @@ function assertNever(x: never): never {
 function stringForQuestion(question: Question): string {
   const operands = question.operands;
   switch(question.type) {
-    case QuestionType.ADDITION:
-      return `${operands[0]} + ${operands[1]}`;
+    case QuestionType.SUM:
+      return operands.join(" + ");
     case QuestionType.SUBTRACTION:
-      return `${operands[0]} - ${operands[1]}`;
+      return operands.join(" - ");
     case QuestionType.MULTIPLICATION:
-      return `${operands[0]} * ${operands[1]}`;
+      return operands.join(" * ");
     case QuestionType.DIVISION:
-      return `${operands[0]} / ${operands[1]}`;
+      return operands.join(" / ");
     case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
       return `${operands[0]} * ${operands[1]} ≟ ${operands[2]}`;
     case QuestionType.DIVISION_DIGIT_SUM_CHECK:
@@ -35,7 +35,7 @@ function stringForQuestion(question: Question): string {
 
 function inputTypeForQuestion(question: Question): InputType {
   switch(question.type) {
-    case QuestionType.ADDITION:
+    case QuestionType.SUM:
     case QuestionType.SUBTRACTION:
     case QuestionType.MULTIPLICATION:
     case QuestionType.DIVISION:

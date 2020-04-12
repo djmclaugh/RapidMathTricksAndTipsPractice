@@ -6,7 +6,7 @@ function assertNever(x: never): never {
 }
 
 export enum QuestionType {
-  ADDITION,
+  SUM,
   SUBTRACTION,
   MULTIPLICATION,
   DIVISION,
@@ -15,7 +15,7 @@ export enum QuestionType {
 }
 
 export const QUESTION_TYPES_WITH_NUMBER_ANSWER = [
-  QuestionType.ADDITION,
+  QuestionType.SUM,
   QuestionType.SUBTRACTION,
   QuestionType.MULTIPLICATION,
   QuestionType.DIVISION,
@@ -32,7 +32,11 @@ export interface Question {
 }
 
 export function newAddition(a: number, b: number) {
-  return {type: QuestionType.ADDITION, operands: [a, b]};
+  return {type: QuestionType.SUM, operands: [a, b]};
+}
+
+export function newSum(summands:number[]) {
+  return {type: QuestionType.SUM, operands: summands};
 }
 
 export function newSubtraction(a: number, b: number) {
@@ -65,8 +69,8 @@ export function newDivisionFromMultiplication(multiplication: Question): Questio
 
 export function getNumberAnswer(question: Question): number {
   switch(question.type) {
-    case QuestionType.ADDITION:
-      return getAdditionAnswer(question);
+    case QuestionType.SUM:
+      return getSumAnswer(question);
     case QuestionType.SUBTRACTION:
       return getSubtractionAnswer(question);
     case QuestionType.MULTIPLICATION:
@@ -83,7 +87,7 @@ export function getNumberAnswer(question: Question): number {
 
 export function getBooleanAnswer(question: Question): boolean {
   switch(question.type) {
-    case QuestionType.ADDITION:
+    case QuestionType.SUM:
     case QuestionType.SUBTRACTION:
     case QuestionType.MULTIPLICATION:
     case QuestionType.DIVISION:
@@ -97,12 +101,13 @@ export function getBooleanAnswer(question: Question): boolean {
   }
 }
 
-function getAdditionAnswer(question: Question): number {
-  assert(question.type === QuestionType.ADDITION);
-  assert(question.operands.length === 2);
-  const a: Rational = Rational.fromNumber(question.operands[0]);
-  const b: Rational = Rational.fromNumber(question.operands[1]);
-  return Rational.add(a, b).toNumber();
+function getSumAnswer(question: Question): number {
+  assert(question.type === QuestionType.SUM);
+  let total: Rational = new Rational(0, 1);
+  for (let summand of question.operands) {
+    total = Rational.add(total, Rational.fromNumber(summand));
+  }
+  return total.toNumber();
 }
 
 function getSubtractionAnswer(question: Question): number {
