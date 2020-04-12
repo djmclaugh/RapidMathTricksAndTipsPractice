@@ -37,6 +37,8 @@ const TRICK_NAMES: string[] = [
   "Subtract by adding (variation)",
   "Subtract by altering",
   "Add by altering",
+  "Add by grouping and reordering",
+  "Add without carrying"
 ];
 
 enum TrickSelectorType {

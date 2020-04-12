@@ -1,4 +1,4 @@
-import {Question, newAddition, newSubtraction, newMultiplication, newDivision} from "../question";
+import {Question, newAddition, newSum, newSubtraction, newMultiplication, newDivision} from "../question";
 import {randomInt, randomFromArray} from "../random_util";
 import {randomSimpleFactor, randomTwoDigitFactor, randomNonTrivialTwoDigitFactor, TRICKY_SQUARE_ROOTS, SIMPLE_FACTORS} from "./generator_util";
 
@@ -222,6 +222,24 @@ export function generateQuestionForTrick32(): Question {
   return randomAdditionOrder(a, b);
 }
 
+// Add by grouping and reordering
+export function generateQuestionForTrick33(): Question {
+  const summands: number[] = [];
+  for (let i = 0; i < 8; ++i) {
+    summands.push(1 + randomInt(9));
+  }
+  return newSum(summands);
+}
+
+// Add by without carrying
+export function generateQuestionForTrick34(): Question {
+  const summands: number[] = [];
+  for (let i = 0; i < 8; ++i) {
+    summands.push(11 + randomInt(89));
+  }
+  return newSum(summands);
+}
+
 export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick1,
   generateQuestionForTrick2,
@@ -255,4 +273,6 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick30,
   generateQuestionForTrick31,
   generateQuestionForTrick32,
+  generateQuestionForTrick33,
+  generateQuestionForTrick34,
 ]
