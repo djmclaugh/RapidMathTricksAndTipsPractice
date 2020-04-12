@@ -1,4 +1,4 @@
-import {Question, newMultiplication, newDivision} from "../question";
+import {Question, newAddition, newSubtraction, newMultiplication, newDivision} from "../question";
 import {randomInt, randomFromArray} from "../random_util";
 import {randomSimpleFactor, randomTwoDigitFactor, randomNonTrivialTwoDigitFactor, TRICKY_SQUARE_ROOTS, SIMPLE_FACTORS} from "./generator_util";
 
@@ -6,10 +6,18 @@ import {generateQuestionForTrick1} from "./trick_1_generator";
 import {generateQuestionForTrick2} from "./trick_2_generator";
 import {generateQuestionForTrick14} from "./trick_14_generator";
 
+function randomAdditionOrder(a: number, b: number): Question {
+  return randomFromArray([newAddition(a, b), newAddition(b, a)]);
+}
+
+function randomMultiplicationOrder(a: number, b: number): Question {
+  return randomFromArray([newMultiplication(a, b), newMultiplication(b, a)]);
+}
+
 // Multiplying by 4
 export function generateQuestionForTrick3(): Question {
   const x = randomNonTrivialTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(4, x) : newMultiplication(x, 4);
+  return randomMultiplicationOrder(4, x);
 }
 
 // Dividing by 4
@@ -21,7 +29,7 @@ export function generateQuestionForTrick4(): Question {
 // Multiplying by 5
 export function generateQuestionForTrick5(): Question {
   const x = randomNonTrivialTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(5, x) : newMultiplication(x, 5);
+  return randomMultiplicationOrder(5, x);
 }
 
 // Dividing by 5
@@ -39,13 +47,13 @@ export function generateQuestionForTrick7(): Question {
 // Multiply 2 digits by 11
 export function generateQuestionForTrick8(): Question {
   const x = randomNonTrivialTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(11, x) : newMultiplication(x, 11);
+  return randomMultiplicationOrder(11, x);
 }
 
 // Multiplying by 25
 export function generateQuestionForTrick9(): Question {
   const x = randomNonTrivialTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(25, x) : newMultiplication(x, 25);
+  return randomMultiplicationOrder(25, x);
 }
 
 // Dividing by 25
@@ -56,13 +64,13 @@ export function generateQuestionForTrick10(): Question {
 // Multiplying a one/two digit number by 99
 export function generateQuestionForTrick11(): Question {
   const x = randomTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(99, x) : newMultiplication(x, 99);
+  return randomMultiplicationOrder(99, x);
 }
 
 // Multiplying a one/two digit number by 101
 export function generateQuestionForTrick12(): Question {
   const x = randomTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(101, x) : newMultiplication(x, 101);
+  return randomMultiplicationOrder(101, x);
 }
 
 // Multiplying two numbers whose difference is 2
@@ -73,13 +81,13 @@ const ROOTS_FOR_TRICK_13: number[] = TRICKY_SQUARE_ROOTS.concat(
 );
 export function generateQuestionForTrick13(): Question {
   const x = randomFromArray(ROOTS_FOR_TRICK_13);
-  return Math.random() < 0.5 ? newMultiplication(x - 1, x + 1) : newMultiplication(x + 1, x - 1);
+  return randomMultiplicationOrder(x - 1, x + 1);
 }
 
 // Multiplying by 125
 export function generateQuestionForTrick15(): Question {
   const x = (1 + randomInt(60)) * 4;
-  return Math.random() < 0.5 ? newMultiplication(125, x) : newMultiplication(x, 125);
+  return randomMultiplicationOrder(125, x);
 }
 
 // Dividing by 125
@@ -91,19 +99,19 @@ export function generateQuestionForTrick16(): Question {
 // Multiplying by 9
 export function generateQuestionForTrick17(): Question {
   const x = randomNonTrivialTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(9, x) : newMultiplication(x, 9);
+  return randomMultiplicationOrder(9, x);
 }
 
 // Multiplying by 12
 export function generateQuestionForTrick18(): Question {
   const x = randomNonTrivialTwoDigitFactor();
-  return Math.random() < 0.5 ? newMultiplication(12, x) : newMultiplication(x, 12);
+  return randomMultiplicationOrder(12, x);
 }
 
 // Multiplying by 15
 export function generateQuestionForTrick19(): Question {
   const x = (4 + randomInt(40)) * 2;
-  return Math.random() < 0.5 ? newMultiplication(15, x) : newMultiplication(x, 15);
+  return randomMultiplicationOrder(15, x);
 }
 
 // Multiplying numbers with a special relationship
@@ -128,7 +136,7 @@ export function generateQuestionForTrick21(): Question {
     console.log("this should never happen");
     b = randomTwoDigitFactor() * 2;
   }
-  return Math.random() < 0.5 ? newMultiplication(a, b) : newMultiplication(b, a);
+  return randomMultiplicationOrder(a, b);
 }
 
 export function generateQuestionForTrick22(): Question {
@@ -171,7 +179,7 @@ const ROOTS_FOR_TRICK_26: number[] = TRICKY_SQUARE_ROOTS.concat(
 );
 export function generateQuestionForTrick26(): Question {
   const x = randomFromArray(ROOTS_FOR_TRICK_26);
-  return Math.random() < 0.5 ? newMultiplication(x - 2, x + 2) : newMultiplication(x + 2, x - 2);
+  return randomMultiplicationOrder(x - 2, x + 2);
 }
 
 // Multiply in two steps
@@ -184,6 +192,34 @@ export function generateQuestionForTrick28(): Question {
   const a = 101 + randomInt(9);
   const b = 101 + randomInt(9);
   return newMultiplication(a, b);
+}
+
+// Subtract by adding
+export function generateQuestionForTrick29(): Question {
+  const difference = 11 + randomInt(90);
+  const minuend = 1 + randomInt(99 - difference);
+  return newSubtraction(minuend + difference, minuend);
+}
+
+// Subtract by adding (variation)
+export function generateQuestionForTrick30(): Question {
+  return newSubtraction(101 + randomInt(70), 99 - randomInt(70));
+}
+
+// Subtract by altering
+export function generateQuestionForTrick31(): Question {
+  const subtrahendTensDigit = 2 + randomInt(8);
+  const subtrahend = (subtrahendTensDigit * 10) + randomInt(8);
+  const minuendTensDigit = randomInt(subtrahendTensDigit);
+  const minuend = (minuendTensDigit * 10) + 8 + randomInt(1);
+  return newSubtraction(subtrahend, minuend);
+}
+
+// Add by altering
+export function generateQuestionForTrick32(): Question {
+  const a = (10 * (1 + randomInt(9))) + (8 + randomInt(1));
+  const b = (10 * (1 + randomInt(9))) + (3 + randomInt(5));
+  return randomAdditionOrder(a, b);
 }
 
 export const GENERATORS: Array<() => Question> = [
@@ -215,4 +251,8 @@ export const GENERATORS: Array<() => Question> = [
   generateQuestionForTrick26,
   generateQuestionForTrick27,
   generateQuestionForTrick28,
+  generateQuestionForTrick29,
+  generateQuestionForTrick30,
+  generateQuestionForTrick31,
+  generateQuestionForTrick32,
 ]

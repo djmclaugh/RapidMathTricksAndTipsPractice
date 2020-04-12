@@ -33,6 +33,9 @@ const TRICK_NAMES: string[] = [
   "Multiplying two numbers whose difference is 4",
   "Multiply in two steps",
   "Multiply numbers just over 100",
+  "Subtract by adding",
+  "Subtract by adding (variation)",
+  "Subtract by altering",
 ];
 
 enum TrickSelectorType {
