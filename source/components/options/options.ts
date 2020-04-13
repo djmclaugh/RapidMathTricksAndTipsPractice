@@ -4,42 +4,7 @@ import { SingleTrickSelectorComponent } from "./single_trick_selector";
 import { MultipleTricksSelectorComponent } from "./multiple_tricks_selector";
 import { RadioGroupComponent } from "../shared/radio_group";
 
-const TRICK_NAMES: string[] = [
-  "Multiplying and dividing with zeroes",
-  "Multiplying and dividing with decimal points",
-  "Multiplying by 4",
-  "Dividing by 4",
-  "Multiplying by 5",
-  "Dividing by 5",
-  "Square a number ending in 5",
-  "Multiply 2 digits by 11",
-  "Multiplying by 25",
-  "Dividing by 25",
-  "Multiplying a one/two digit number by 99",
-  "Multiplying a one/two digit number by 101",
-  "Multiplying two numbers whose difference is 2",
-  "Check multiplications and divisions",
-  "Multiplying by 125",
-  "Dividing by 125",
-  "Multiplying by 9",
-  "Multiplying by 12",
-  "Multiplying by 15",
-  "Multiplying numbers with a special relationship",
-  "Multiplying by x.5",
-  "Dividing by x.5",
-  "Square two digit number starting with a 5",
-  "Square two digit number ending with a 1",
-  "Two digit numbers",
-  "Multiplying two numbers whose difference is 4",
-  "Multiply in two steps",
-  "Multiply numbers just over 100",
-  "Subtract by adding",
-  "Subtract by adding (variation)",
-  "Subtract by altering",
-  "Add by altering",
-  "Add by grouping and reordering",
-  "Add without carrying"
-];
+const TRICK_NAMES: string[] = GENERATORS.map((g) => g.name);
 
 enum TrickSelectorType {
   SINGLE_TRICK,
@@ -49,10 +14,6 @@ enum TrickSelectorType {
 
 const singleSelectorRef = "single_selector_ref";
 const multipleSelectorRef = "multiple_selector_ref";
-
-if (TRICK_NAMES.length < GENERATORS.length) {
-  throw new Error("Some tricks are missing display names");
-}
 
 export const OptionsComponent = Vue.extend({
   components: {

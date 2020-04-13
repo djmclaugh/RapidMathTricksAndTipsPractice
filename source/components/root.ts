@@ -45,7 +45,7 @@ export const RootComponent = Vue.extend({
       this.startTime = Date.now();
       for (let i = 0; i < includeTrick.length; ++i) {
         if (includeTrick[i]) {
-          this.includedTrickGenerators.push(GENERATORS[i]);
+          this.includedTrickGenerators.push(GENERATORS[i].generator);
         }
       }
       this.questions = [this.createNewQuestion()];
