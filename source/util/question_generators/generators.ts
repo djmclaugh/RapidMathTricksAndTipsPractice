@@ -1,5 +1,5 @@
-import {Question, newAddition, newSum, newSubtraction, newMultiplication, newDivision} from "../question";
-import {randomInt, randomFromArray} from "../random_util";
+import {Question, newAddition, newSum, newArithmeticProgressionSum, newSubtraction, newMultiplication, newDivision} from "../question";
+import {randomInt, randomFromArray, suffle} from "../random_util";
 import {randomSimpleFactor, randomTwoDigitFactor, randomNonTrivialTwoDigitFactor, TRICKY_SQUARE_ROOTS, SIMPLE_FACTORS} from "./generator_util";
 
 import {generateQuestionForTrick1} from "./trick_1_generator";
@@ -323,6 +323,32 @@ const generator34 = {
   }
 };
 
+// TODO: Generator 35
+// TODO: Generator 36
+// TODO: Generator 37
+// TODO: Generator 38
+
+const generator39 = {
+  name: "Add a few numbers",
+  generator: function(): Question {
+    const summands: number[] = [];
+    summands.push(1 + randomInt(9));
+    summands.push(11 + randomInt(19));
+    summands.push(31 + randomInt(19));
+    summands.push(51 + randomInt(39));
+    suffle(summands);
+    return newSum(summands);
+  }
+};
+
+const generator40 = {
+  name: "Add 1 + 2 + 3 + ...",
+  generator: function(): Question {
+    const numberOfTerms = 5 + randomInt(26);
+    return newArithmeticProgressionSum(1, 1, numberOfTerms);
+  }
+};
+
 export const GENERATORS: QuestionGenerator[] = [
   generator1,
   generator2,
@@ -358,4 +384,6 @@ export const GENERATORS: QuestionGenerator[] = [
   generator32,
   generator33,
   generator34,
+  generator39,
+  generator40,
 ]
