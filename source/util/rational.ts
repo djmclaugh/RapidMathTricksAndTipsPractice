@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 
 function gcd(a: number, b: number): number {
-  if (b == 0) {
+  if (b === 0) {
     return a;
   }
   return gcd(b, a % b);
@@ -22,7 +22,7 @@ export class Rational {
   }
 
   public isInteger(): boolean {
-    return this.divisor == 1;
+    return this.divisor === 1;
   }
 
   public toNumber(): number {
@@ -33,7 +33,7 @@ export class Rational {
     if (Number.isInteger(x)) {
       return new Rational(x, 1);
     }
-    let parts = x.toString().split(".");
+    const parts = x.toString().split('.');
     return new Rational(parseInt(parts[0] + parts[1]), Math.pow(10, parts[1].length));
   }
 
@@ -54,7 +54,7 @@ export class Rational {
   }
 
   public static div(a: Rational, b: Rational) {
-    assert(b.dividend != 0);
+    assert(b.dividend !== 0);
     return new Rational(a.dividend * b.divisor, a.divisor * b.dividend);
   }
 }

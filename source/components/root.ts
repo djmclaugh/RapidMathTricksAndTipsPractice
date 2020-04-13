@@ -1,11 +1,11 @@
-import Vue, { VNode } from "vue";
+import Vue, { VNode } from 'vue';
 
-import { QuestionCardComponent } from "./question_card";
-import { OptionsComponent } from "./options/options";
-import { StatsComponent } from "./stats";
-import { Question, QuestionType } from "../util/question";
-import { randomInt } from "../util/random_util";
-import { GENERATORS } from "../util/question_generators/generators";
+import { QuestionCardComponent } from './question_card';
+import { OptionsComponent } from './options/options';
+import { StatsComponent } from './stats';
+import { Question } from '../util/question';
+import { randomInt } from '../util/random_util';
+import { GENERATORS } from '../util/question_generators/generators';
 
 interface RootComponentData {
   questions: Question[],
@@ -25,12 +25,12 @@ export const RootComponent = Vue.extend({
       attempts: 0,
       successes: 0,
       startTime: 0,
-    }
+    };
   },
   components: {
     options: OptionsComponent,
     questionCard: QuestionCardComponent,
-    stats: StatsComponent
+    stats: StatsComponent,
   },
   methods: {
     createNewQuestion(): Question {
@@ -58,34 +58,34 @@ export const RootComponent = Vue.extend({
     },
   },
   render: function(createElement): VNode {
-    const optionsElement: VNode = createElement("options", {
+    const optionsElement: VNode = createElement('options', {
       on: {
         start: this.processStart,
       },
     });
 
-    const statsElement: VNode = createElement("stats", {
+    const statsElement: VNode = createElement('stats', {
       props: {
         attempts: this.attempts,
         successes: this.successes,
         totalTime: Date.now() - this.startTime,
-      }
+      },
     });
     const questionElements = [];
     for (let i = this.questions.length - 1; i >= 0; --i) {
       const question = this.questions[i];
-      questionElements.push(createElement("question-card", {
+      questionElements.push(createElement('question-card', {
         props: {
           questionData: question,
-          id: i
+          id: i,
         },
         on: {
-          correct: this.processCorrect
+          correct: this.processCorrect,
         },
-        key: this.runNumber + "-" + i,
+        key: this.runNumber + '-' + i,
       }));
     }
-    const elements = [optionsElement, statsElement, createElement("div", questionElements)];
-    return createElement("div", elements);
+    const elements = [optionsElement, statsElement, createElement('div', questionElements)];
+    return createElement('div', elements);
   },
 });

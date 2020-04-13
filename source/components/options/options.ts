@@ -1,8 +1,8 @@
-import Vue, { VNode } from "vue";
-import { GENERATORS } from "../../util/question_generators/generators";
-import { SingleTrickSelectorComponent } from "./single_trick_selector";
-import { MultipleTricksSelectorComponent } from "./multiple_tricks_selector";
-import { RadioGroupComponent } from "../shared/radio_group";
+import Vue, { VNode } from 'vue';
+import { GENERATORS } from '../../util/question_generators/generators';
+import { SingleTrickSelectorComponent } from './single_trick_selector';
+import { MultipleTricksSelectorComponent } from './multiple_tricks_selector';
+import { RadioGroupComponent } from '../shared/radio_group';
 
 const TRICK_NAMES: string[] = GENERATORS.map((g) => g.name);
 
@@ -12,8 +12,8 @@ enum TrickSelectorType {
   MULTIPLE_TRICKS,
 }
 
-const singleSelectorRef = "single_selector_ref";
-const multipleSelectorRef = "multiple_selector_ref";
+const singleSelectorRef = 'single_selector_ref';
+const multipleSelectorRef = 'multiple_selector_ref';
 
 export const OptionsComponent = Vue.extend({
   components: {
@@ -26,7 +26,7 @@ export const OptionsComponent = Vue.extend({
       // Create an array with GENERATORS.length elements, all initialized to false.
       includedTricks: GENERATORS.map(() => false),
       trickSelectorType: TrickSelectorType.SINGLE_TRICK,
-    }
+    };
   },
   computed: {
     atLeastOneTrickIncluded(): boolean {
@@ -44,16 +44,18 @@ export const OptionsComponent = Vue.extend({
     },
     updateSelectorType(type: TrickSelectorType): void {
       this.trickSelectorType = type;
-      switch(this.trickSelectorType) {
+      switch (this.trickSelectorType) {
         case TrickSelectorType.SINGLE_TRICK:
-        case TrickSelectorType.ALL_TRICKS_UP_TO:
+        case TrickSelectorType.ALL_TRICKS_UP_TO: {
           const singleTrickComponent: any = this.$refs[singleSelectorRef];
           this.updateSelectedTrick(singleTrickComponent.selectedTrick);
           break;
-        case TrickSelectorType.MULTIPLE_TRICKS:
+        }
+        case TrickSelectorType.MULTIPLE_TRICKS: {
           const multipleTricksComponent: any = this.$refs[multipleSelectorRef];
-          this.updateIncludedTricks(multipleTricksComponent.includedTricks.slice())
+          this.updateIncludedTricks(multipleTricksComponent.includedTricks.slice());
           break;
+        }
       }
     },
     updateSelectedTrick(selectedTrick: number): void {
@@ -68,14 +70,16 @@ export const OptionsComponent = Vue.extend({
           }
           break;
         default:
-          throw new Error("updateSelectedTrick should only be called if the trick selection type is SINGLE_TRICK or ALL_TRICKS_UP_TO");
+          throw new Error(
+            `updateSelectedTrick should only be called if the trick selection type is SINGLE_TRICK
+            or ALL_TRICKS_UP_TO`);
       }
     },
     updateIncludedTricks(includedTricks: boolean[]): void {
       this.includedTricks = includedTricks;
     },
-    startButtonPressed(event: any): void {
-      this.$emit("start", this.includedTricks);
+    startButtonPressed(): void {
+      this.$emit('start', this.includedTricks);
     },
   },
   mounted(): void {
@@ -84,31 +88,31 @@ export const OptionsComponent = Vue.extend({
   render(createElement): VNode {
     const elements: VNode[] = [];
 
-    elements.push(createElement("legend", "Options"));
+    elements.push(createElement('legend', 'Options'));
 
-    elements.push(createElement("radioGroup", {
+    elements.push(createElement('radioGroup', {
       props: {
-        name: "selector_type",
+        name: 'selector_type',
         values: [
-          "" + TrickSelectorType.SINGLE_TRICK,
-          "" + TrickSelectorType.ALL_TRICKS_UP_TO,
-          "" + TrickSelectorType.MULTIPLE_TRICKS,
+          '' + TrickSelectorType.SINGLE_TRICK,
+          '' + TrickSelectorType.ALL_TRICKS_UP_TO,
+          '' + TrickSelectorType.MULTIPLE_TRICKS,
         ],
         valueDisplayNames: [
-          "Practice Single Trick",
-          "Practice All Tricks Up To",
-          "Practice Multiple Tricks",
+          'Practice Single Trick',
+          'Practice All Tricks Up To',
+          'Practice Multiple Tricks',
         ],
-        initialValue: "" + this.trickSelectorType,
+        initialValue: '' + this.trickSelectorType,
       },
       on: {
         change: this.processSelectorTypeSelection,
       },
     }));
 
-    elements.push(createElement("br"));
+    elements.push(createElement('br'));
 
-    elements.push(createElement("singleSelector", {
+    elements.push(createElement('singleSelector', {
       ref: singleSelectorRef,
       props: {
         optionsArray: TRICK_NAMES,
@@ -116,15 +120,15 @@ export const OptionsComponent = Vue.extend({
       attrs: {
         hidden: ![
           TrickSelectorType.SINGLE_TRICK,
-          TrickSelectorType.ALL_TRICKS_UP_TO
+          TrickSelectorType.ALL_TRICKS_UP_TO,
         ].includes(this.trickSelectorType),
       },
       on: {
-        updateSelectedTrick: this.updateSelectedTrick
+        updateSelectedTrick: this.updateSelectedTrick,
       },
     }));
 
-    elements.push(createElement("multipleSelector", {
+    elements.push(createElement('multipleSelector', {
       ref: multipleSelectorRef,
       props: {
         optionsArray: TRICK_NAMES,
@@ -133,22 +137,22 @@ export const OptionsComponent = Vue.extend({
         hidden: this.trickSelectorType !== TrickSelectorType.MULTIPLE_TRICKS,
       },
       on: {
-        updateIncludedTricks: this.updateIncludedTricks
+        updateIncludedTricks: this.updateIncludedTricks,
       },
     }));
 
-    elements.push(createElement("br"));
+    elements.push(createElement('br'));
 
-    const startButton = createElement("button", {
+    const startButton = createElement('button', {
       attrs: {
         disabled: !this.atLeastOneTrickIncluded,
       },
       on: {
         click: this.startButtonPressed,
-      }
-    }, "Start!")
+      },
+    }, 'Start!');
     elements.push(startButton);
 
-    return createElement("fieldset", elements);
+    return createElement('fieldset', elements);
   },
 });

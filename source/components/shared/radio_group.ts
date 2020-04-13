@@ -1,4 +1,4 @@
-import Vue, { VNode } from "vue";
+import Vue, { VNode } from 'vue';
 
 export const RadioGroupComponent = Vue.extend({
   props: {
@@ -11,26 +11,26 @@ export const RadioGroupComponent = Vue.extend({
   data: function() {
     return {
       selectedValue: this.initialValue,
-    }
+    };
   },
   methods: {
     processSelection(event: any): void {
       this.selectedValue = event.target.value;
-      this.$emit("change", this.selectedValue);
-    }
+      this.$emit('change', this.selectedValue);
+    },
   },
   render(createElement): VNode {
     const elements: VNode[] = [];
 
     for (let i = 0; i < this.values.length; ++i) {
       const value = this.values[i];
-      const buttonId = [this.name, value, "radio_button"].join("_");
+      const buttonId = [this.name, value, 'radio_button'].join('_');
 
-      const inputElement = createElement("input", {
+      const inputElement = createElement('input', {
         attrs: {
           id: buttonId,
           name: this.name,
-          type: "radio",
+          type: 'radio',
           value: value,
           checked: this.selectedValue === value,
           disabled: this.disabled,
@@ -40,19 +40,19 @@ export const RadioGroupComponent = Vue.extend({
         },
       });
 
-      const labelElement = createElement("label", {
+      const labelElement = createElement('label', {
         attrs: {
           for: buttonId,
-        }
+        },
       }, this.valueDisplayNames[i] as string);
 
-      elements.push(createElement("span", {
+      elements.push(createElement('span', {
         class: {
-          nobreak: true
-        }
+          nobreak: true,
+        },
       }, [inputElement, labelElement]));
     }
 
-    return createElement("span", elements);
+    return createElement('span', elements);
   },
 });

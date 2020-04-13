@@ -1,13 +1,17 @@
-import Vue from "vue";
+import Vue from 'vue';
 
-import { RootComponent } from "./components/root"
+import { RootComponent } from './components/root';
 
-let v = new Vue({
-  el: "#app",
+const v = new Vue({
+  el: '#app',
   components: {
-    root: RootComponent
+    root: RootComponent,
   },
   render: function(createElement) {
-    return createElement("root");
+    return createElement('root');
   },
 });
+
+if (!v) {
+  console.log('Error while bootstrapping Vue');
+}

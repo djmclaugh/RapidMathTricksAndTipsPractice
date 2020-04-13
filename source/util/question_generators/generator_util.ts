@@ -1,19 +1,19 @@
-import {randomInt, randomFromArray} from "../random_util";
+import { randomInt, randomFromArray } from '../random_util';
 
 // Powers of 10 are considered trivial to multiply since they don't change the digits of the
 // multiplicand (only their positions).
 export function isTrivialFactor(x: number): boolean {
-  return x == 0 || Math.log10(x) % 1 == 0;
+  return x === 0 || Math.log10(x) % 1 === 0;
 }
 
 // Numbers that appear in the 12 by 12 times table that is assumed to be known by heart.
 export const TIME_TABLE_FACTORS: number[] = [
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
 ];
 
 // Numbers that appear in the squares table that is assumed to be known by heart.
 export const SQUARES_TABLE: number[] = [
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 ];
 
 // Numbers that are in the times table but are not trivial.
@@ -35,7 +35,7 @@ export const TRICKY_SQUARE_ROOTS: number[] =
  * 0, 1, and 10 are removed because they are too easy to multiply.
  */
 export function randomTwoDigitFactor(): number {
-  let result = 2 + randomInt(98);  // [2, 99]
+  let result = 2 + randomInt(98); // [2, 99]
   if (result >= 10) {
     result += 1;
   }
