@@ -1,12 +1,13 @@
 import * as assert from 'assert';
-import {Rational} from "./rational";
+import { Rational } from './rational';
 
 function assertNever(x: never): never {
-    throw new Error("Unexpected object: " + x);
+  throw new Error('Unexpected object: ' + x);
 }
 
 export enum QuestionType {
   SUM,
+  ARITHMETIC_PROGRESSION_SUM,
   SUBTRACTION,
   MULTIPLICATION,
   DIVISION,
@@ -16,6 +17,7 @@ export enum QuestionType {
 
 export const QUESTION_TYPES_WITH_NUMBER_ANSWER = [
   QuestionType.SUM,
+  QuestionType.ARITHMETIC_PROGRESSION_SUM,
   QuestionType.SUBTRACTION,
   QuestionType.MULTIPLICATION,
   QuestionType.DIVISION,
@@ -32,45 +34,58 @@ export interface Question {
 }
 
 export function newAddition(a: number, b: number) {
-  return {type: QuestionType.SUM, operands: [a, b]};
+  return { type: QuestionType.SUM, operands: [a, b] };
 }
 
 export function newSum(summands:number[]) {
-  return {type: QuestionType.SUM, operands: summands};
+  return { type: QuestionType.SUM, operands: summands };
+}
+
+export function newArithmeticProgressionSum(
+  initialTerm: number,
+  difference: number,
+  numberOfTerms: number,
+) {
+  return {
+    type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
+    operands: [initialTerm, difference, numberOfTerms],
+  };
 }
 
 export function newSubtraction(a: number, b: number) {
-  return {type: QuestionType.SUBTRACTION, operands: [a, b]};
+  return { type: QuestionType.SUBTRACTION, operands: [a, b] };
 }
 
 export function newMultiplication(a: number, b: number) {
-  return {type: QuestionType.MULTIPLICATION, operands: [a, b]};
+  return { type: QuestionType.MULTIPLICATION, operands: [a, b] };
 }
 
 export function newDivision(a: number, b: number) {
-  return {type: QuestionType.DIVISION, operands: [a, b]};
+  return { type: QuestionType.DIVISION, operands: [a, b] };
 }
 
 export function newMultiplicationDigitSumCheck(a: number, b: number, product: number) {
-  return {type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK, operands: [a, b, product]};
+  return { type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK, operands: [a, b, product] };
 }
 
 export function newDivisionDigitSumCheck(a: number, b: number, quotient: number) {
-  return {type: QuestionType.DIVISION_DIGIT_SUM_CHECK, operands: [a, b, quotient]};
+  return { type: QuestionType.DIVISION_DIGIT_SUM_CHECK, operands: [a, b, quotient] };
 }
 
 export function newDivisionFromMultiplication(multiplication: Question): Question {
   assert(multiplication.type === QuestionType.MULTIPLICATION);
   return {
     type: QuestionType.DIVISION,
-    operands: [getNumberAnswer(multiplication), multiplication.operands[0]]
+    operands: [getNumberAnswer(multiplication), multiplication.operands[0]],
   };
 }
 
 export function getNumberAnswer(question: Question): number {
-  switch(question.type) {
+  switch (question.type) {
     case QuestionType.SUM:
       return getSumAnswer(question);
+    case QuestionType.ARITHMETIC_PROGRESSION_SUM:
+      return getArithmeticProgressionSumAnswer(question);
     case QuestionType.SUBTRACTION:
       return getSubtractionAnswer(question);
     case QuestionType.MULTIPLICATION:
@@ -79,23 +94,24 @@ export function getNumberAnswer(question: Question): number {
       return getDivisionAnswer(question);
     case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
     case QuestionType.DIVISION_DIGIT_SUM_CHECK:
-      throw new Error("Answer to provided question is not a number");
+      throw new Error('Answer to provided question is not a number');
     default:
       return assertNever(question.type);
   }
 }
 
 export function getBooleanAnswer(question: Question): boolean {
-  switch(question.type) {
+  switch (question.type) {
     case QuestionType.SUM:
+    case QuestionType.ARITHMETIC_PROGRESSION_SUM:
     case QuestionType.SUBTRACTION:
     case QuestionType.MULTIPLICATION:
     case QuestionType.DIVISION:
-        throw new Error("Answer to provided question is not a boolean");
+      throw new Error('Answer to provided question is not a boolean');
     case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
-        return getMultiplicationDigitSumCheckAnswer(question);
+      return getMultiplicationDigitSumCheckAnswer(question);
     case QuestionType.DIVISION_DIGIT_SUM_CHECK:
-        return getDivisionDigitSumCheckAnswer(question);
+      return getDivisionDigitSumCheckAnswer(question);
     default:
       return assertNever(question.type);
   }
@@ -104,10 +120,30 @@ export function getBooleanAnswer(question: Question): boolean {
 function getSumAnswer(question: Question): number {
   assert(question.type === QuestionType.SUM);
   let total: Rational = new Rational(0, 1);
-  for (let summand of question.operands) {
+  for (const summand of question.operands) {
     total = Rational.add(total, Rational.fromNumber(summand));
   }
   return total.toNumber();
+}
+
+function getArithmeticProgressionSumAnswer(question: Question): number {
+  assert(question.type === QuestionType.ARITHMETIC_PROGRESSION_SUM);
+  assert(question.operands.length === 3);
+  // Initital term
+  const a = Rational.fromNumber(question.operands[0]);
+  // Difference between terms
+  const d = Rational.fromNumber(question.operands[1]);
+  // Number of terms
+  const n = Rational.fromNumber(question.operands[2]);
+
+  // Constants that will be needed in rational form
+  const one = new Rational(1, 1);
+  const two = new Rational(2, 1);
+
+  const lastTerm = Rational.add(a, Rational.mult(Rational.sub(n, one), d));
+  const sum = Rational.mult(Rational.div(Rational.add(a, lastTerm), two), n);
+
+  return sum.toNumber();
 }
 
 function getSubtractionAnswer(question: Question): number {
@@ -148,7 +184,7 @@ function getDivisionDigitSumCheckAnswer(question: Question): boolean {
   assert(question.operands.length === 3);
   return getMultiplicationDigitSumCheckAnswer({
     type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-    operands: [question.operands[2], question.operands[1], question.operands[0]]
+    operands: [question.operands[2], question.operands[1], question.operands[0]],
   });
 }
 
@@ -156,6 +192,6 @@ function digitSumMod9(x: number): number {
   if (Number.isInteger(x)) {
     return Math.abs(x) % 9;
   }
-  let parts = x.toString().split(".");
+  const parts = x.toString().split('.');
   return digitSumMod9(parseInt(parts[0] + parts[1]));
 }

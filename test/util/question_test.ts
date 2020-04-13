@@ -28,6 +28,21 @@ describe("Question", () => {
       });
     });
 
+    it("arithmetic progression sum", () => {
+      assert.equal(getNumberAnswer({
+        type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
+        operands: [1, 1, 10]
+      }), 55);
+      assert.equal(getNumberAnswer({
+        type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
+        operands: [2, 0.01, 7]
+      }), 14.21);
+      assert.equal(getNumberAnswer({
+        type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
+        operands: [10, -2, 11]
+      }), 0);
+    });
+
     it("subtraction", () => {
       assert.equal(getNumberAnswer({
         type: QuestionType.SUBTRACTION,

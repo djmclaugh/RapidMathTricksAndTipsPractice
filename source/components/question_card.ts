@@ -18,6 +18,23 @@ function stringForQuestion(question: Question): string {
   switch(question.type) {
     case QuestionType.SUM:
       return operands.join(" + ");
+    case QuestionType.ARITHMETIC_PROGRESSION_SUM:
+      // Initial terms
+      const a = operands[0];
+      // Difference between terms
+      const d = operands[1];
+      // Number of terms
+      const n = operands[2];
+      if (operands[2] > 6) {
+        return [a, a + d, a + (2 * d)].join(" + ") + " + ... + " + (a + ((n - 1) * d));
+      } else {
+        let text = "" + a;
+        for (let i = 1; i < n; ++i) {
+          text += " + " + (a + (i * d));
+        }
+        return text;
+      }
+      return operands.join(" + ");
     case QuestionType.SUBTRACTION:
       return operands.join(" - ");
     case QuestionType.MULTIPLICATION:
@@ -36,6 +53,7 @@ function stringForQuestion(question: Question): string {
 function inputTypeForQuestion(question: Question): InputType {
   switch(question.type) {
     case QuestionType.SUM:
+    case QuestionType.ARITHMETIC_PROGRESSION_SUM:
     case QuestionType.SUBTRACTION:
     case QuestionType.MULTIPLICATION:
     case QuestionType.DIVISION:
