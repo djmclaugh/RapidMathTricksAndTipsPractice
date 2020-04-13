@@ -19,6 +19,7 @@ import {
 import { generateQuestionForTrick1 } from './trick_1_generator';
 import { generateQuestionForTrick2 } from './trick_2_generator';
 import { generateQuestionForTrick14 } from './trick_14_generator';
+import { generateQuestionForTrick42 } from './trick_42_generator';
 
 export interface QuestionGenerator {
   name: string,
@@ -373,7 +374,10 @@ const generator41 = {
   },
 };
 
-// TODO: Generator 42
+const generator42 = {
+  name: 'Check additions and subtractions',
+  generator: generateQuestionForTrick42
+}
 
 const generator43 = {
   name: 'Multiplying by 75',
@@ -445,6 +449,7 @@ export const GENERATORS: QuestionGenerator[] = [
   generator39,
   generator40,
   generator41,
+  generator42,
   generator43,
   generator44,
   generator45,
