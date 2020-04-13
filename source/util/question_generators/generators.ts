@@ -363,6 +363,16 @@ const generator40 = {
   },
 };
 
+const generator41 = {
+  name: 'Subtract in two steps',
+  generator: function(): Question {
+    const subtrahendTensDigit = 2 + randomInt(19);
+    const minuendTensDigit = 1 + randomInt(subtrahendTensDigit - 2);
+    const minuend = (minuendTensDigit * 10) + (1 + randomInt(9));
+    return newSubtraction(subtrahendTensDigit * 10, minuend);
+  },
+};
+
 export const GENERATORS: QuestionGenerator[] = [
   generator1,
   generator2,
@@ -400,4 +410,5 @@ export const GENERATORS: QuestionGenerator[] = [
   generator34,
   generator39,
   generator40,
+  generator41,
 ];
