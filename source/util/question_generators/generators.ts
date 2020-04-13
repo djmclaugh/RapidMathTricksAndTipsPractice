@@ -373,6 +373,40 @@ const generator41 = {
   },
 };
 
+// TODO: Generator 42
+
+const generator43 = {
+  name: 'Multiplying by 75',
+  generator: function(): Question {
+    const x = (2 + randomInt(21)) * 4;
+    return randomMultiplicationOrder(75, x);
+  },
+};
+
+const generator44 = {
+  name: 'Dividing by 75',
+  generator: function(): Question {
+    const x = (2 + randomInt(21)) * 3;
+    return newDivision(x * randomFromArray([10, 100]), 75);
+  },
+};
+
+const generator45 = {
+  name: 'Dividing by 8',
+  generator: function(): Question {
+    const x = (2 + randomInt(21)) * 4;
+    return newDivision(x * randomFromArray([1, 10]), 8);
+  },
+};
+
+const generator46 = {
+  name: 'Dividing by 15',
+  generator: function(): Question {
+    const x = (2 + randomInt(21)) * 3;
+    return newDivision(x * randomFromArray([1, 10]), 15);
+  },
+};
+
 export const GENERATORS: QuestionGenerator[] = [
   generator1,
   generator2,
@@ -411,4 +445,8 @@ export const GENERATORS: QuestionGenerator[] = [
   generator39,
   generator40,
   generator41,
+  generator43,
+  generator44,
+  generator45,
+  generator46,
 ];
