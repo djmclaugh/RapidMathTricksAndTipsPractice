@@ -41,10 +41,14 @@ function stringForQuestion(question: Question): string {
       return operands.join(' * ');
     case QuestionType.DIVISION:
       return operands.join(' / ');
+    case QuestionType.ADDITION_DIGIT_SUM_CHECK:
+      return `${operands[0]} + ${operands[1]} ?= ${operands[2]}`;
+    case QuestionType.SUBTRACTION_DIGIT_SUM_CHECK:
+      return `${operands[0]} - ${operands[1]} ?= ${operands[2]}`;
     case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
-      return `${operands[0]} * ${operands[1]} ≟ ${operands[2]}`;
+      return `${operands[0]} * ${operands[1]} ?= ${operands[2]}`;
     case QuestionType.DIVISION_DIGIT_SUM_CHECK:
-      return `${operands[0]} / ${operands[1]} ≟ ${operands[2]}`;
+      return `${operands[0]} / ${operands[1]} ?= ${operands[2]}`;
     default:
       return assertNever(question.type);
   }
@@ -58,6 +62,8 @@ function inputTypeForQuestion(question: Question): InputType {
     case QuestionType.MULTIPLICATION:
     case QuestionType.DIVISION:
       return InputType.NUMBER;
+    case QuestionType.ADDITION_DIGIT_SUM_CHECK:
+    case QuestionType.SUBTRACTION_DIGIT_SUM_CHECK:
     case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
     case QuestionType.DIVISION_DIGIT_SUM_CHECK:
       return InputType.POSSIBLY_CORRECT_OR_DEFINITLY_INCORRECT;

@@ -95,6 +95,44 @@ describe('Question', () => {
   });
 
   describe('getBooleanAnswer', () => {
+    it('addition digit sum check', () => {
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
+        operands: [-4, 10, -3],
+      }), true);
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
+        operands: [0.2, 0.7, 0.09],
+      }), true);
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
+        operands: [-4, 10, 5],
+      }), false);
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
+        operands: [0.2, 0.7, 0.15],
+      }), false);
+    });
+
+    it('subtraction digit sum check', () => {
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
+        operands: [-4, 10, 4],
+      }), true);
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
+        operands: [0.7, 0.2, 0.05],
+      }), true);
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
+        operands: [-4, 10, 5],
+      }), false);
+      assert.equal(getBooleanAnswer({
+        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
+        operands: [0.7, 0.2, 0.15],
+      }), false);
+    });
+
     it('multiplication digit sum check', () => {
       assert.equal(getBooleanAnswer({
         type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
