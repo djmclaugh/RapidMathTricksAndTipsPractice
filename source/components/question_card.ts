@@ -209,6 +209,9 @@ export const QuestionCardComponent = Vue.extend({
       }, this.icon);
       elements.push(resultIcon);
     }
+    if (this.question.data.type === QuestionType.ESTIMATE && this.isSolved) {
+      elements.push(createElement('span', ' (' + this.question.computeResult() + ')'));
+    }
 
     return createElement('div', elements);
   },

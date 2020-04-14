@@ -71,6 +71,10 @@ export class Question {
     return this.data.type === QuestionType.DIGIT_CHECK;
   }
 
+  public computeResult(): number {
+    return evaluateOperation(this.data).toNumber();
+  }
+
   public checkNumberAnswer(answer: number) {
     return isCorrectNumberAnswer(this.data, answer);
   }
@@ -186,31 +190,32 @@ export function newDivisionFromMultiplication(multiplication: Question): Questio
   assert(multiplication.data.operator === Operator.MULTIPLICATION);
   assert(multiplication.data.operands.length === 2);
   return newBinaryOperation(
-    evaluateOperation(multiplication.data),
+    evaluateOperation(multiplication.data).toNumber(),
     multiplication.data.operands[0],
     Operator.DIVISION,
   );
 }
 
-function evaluateOperation(question: QuestionData): number {
+function evaluateOperation(question: QuestionData): Rational {
   const operation: (a: Rational, b: Rational) => Rational = operatorToFunction(question.operator);
   const operands: Rational[] = question.operands.map((x) => Rational.fromNumber(x));
   const firstOperand: Rational = operands[0];
   const restOfOperands: Rational[] = operands.slice(1);
-  const result: Rational = restOfOperands.reduce((accumulator, currentValue) => {
+  return restOfOperands.reduce((accumulator, currentValue) => {
     return operation(accumulator, currentValue);
   }, firstOperand);
-  return result.toNumber();
 }
 
 export function isCorrectNumberAnswer(question: QuestionData, answer: number) {
   if (question.type === QuestionType.RESULT) {
-    return answer === evaluateOperation(question);
+    return answer === evaluateOperation(question).toNumber();
   } else if (question.type === QuestionType.ESTIMATE) {
     const exactAnswer = evaluateOperation(question);
-    const lowerBound = exactAnswer * (1 - question.estimateDetails!.acceptableRelativeError);
-    const upperBound = exactAnswer * (1 + question.estimateDetails!.acceptableRelativeError);
-    return lowerBound <= answer && answer <= upperBound;
+    const one = new Rational(1, 1);
+    const error = Rational.fromNumber(question.estimateDetails!.acceptableRelativeError);
+    const lowerBound = Rational.mult(exactAnswer, Rational.sub(one, error));
+    const upperBound = Rational.mult(exactAnswer, Rational.add(one, error));
+    return lowerBound.toNumber() <= answer && answer <= upperBound.toNumber();
   }
   throw Error(`A number answer is only expected for questions of type RESULT and ESTIMATE, not for
     questions of type ${question.type}.`);
@@ -219,7 +224,7 @@ export function isCorrectNumberAnswer(question: QuestionData, answer: number) {
 export function isCorrectBooleanAnswer(question: QuestionData, answer: boolean) {
   if (question.type === QuestionType.DIGIT_CHECK) {
     const proposedResult = question.digitCheckDetails!.proposedResult;
-    const exactResult = evaluateOperation(question);
+    const exactResult = evaluateOperation(question).toNumber();
     const hasSameDigitSum = digitSumMod9(proposedResult) === digitSumMod9(exactResult);
     return answer === hasSameDigitSum;
   }

@@ -148,6 +148,18 @@ describe('Question', () => {
         assert.isFalse(question.checkNumberAnswer(101.1));
         assert.isFalse(question.checkNumberAnswer(98.9));
       });
+      it('division', () => {
+        const question: Question = new Question({
+          type: QuestionType.ESTIMATE,
+          operator: Operator.DIVISION,
+          operands: [900, 14],
+          estimateDetails: {
+            acceptableRelativeError: 0.02,
+          },
+        });
+        assert.isTrue(question.checkNumberAnswer(63));
+        assert.isFalse(question.checkNumberAnswer(62.999999999));
+      });
     });
 
     describe('type: DIGIT_CHECK', () => {
