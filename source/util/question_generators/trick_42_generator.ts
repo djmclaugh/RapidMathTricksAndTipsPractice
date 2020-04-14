@@ -1,4 +1,4 @@
-import { Question, newAdditionDigitSumCheck, newSubtractionDigitSumCheck } from '../question';
+import { Operator, Question, newDigitSumCheck } from '../question';
 import { randomInt, randomFromArray } from '../random_util';
 
 // The chance of generating an addition question instead of a subtraction question.
@@ -21,7 +21,7 @@ function generateAddition(): Question {
     sum += randomFromArray([-10, 10]);
   }
 
-  return newAdditionDigitSumCheck(a, b, sum);
+  return newDigitSumCheck(a, b, Operator.ADDITION, sum);
 }
 
 function generateSubtraction(): Question {
@@ -31,7 +31,7 @@ function generateSubtraction(): Question {
 
   const subtrahendOnesDigit = randomInt(minuendOnesDigit);
   const subtrahendTensDigit = randomInt(minuendTensDigit);
-  const subtrahend = 100 + (10 * subtrahendTensDigit) + subtrahendOnesDigit
+  const subtrahend = 100 + (10 * subtrahendTensDigit) + subtrahendOnesDigit;
 
   let difference = subtrahend - minuend;
 
@@ -40,5 +40,5 @@ function generateSubtraction(): Question {
     difference += randomFromArray([-10, 10]);
   }
 
-  return newSubtractionDigitSumCheck(subtrahend, minuend, difference);
+  return newDigitSumCheck(subtrahend, minuend, Operator.SUBTRACTION, difference);
 }

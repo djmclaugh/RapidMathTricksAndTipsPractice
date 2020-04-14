@@ -1,190 +1,192 @@
-import {
-  QuestionType,
-  getBooleanAnswer,
-  getNumberAnswer,
-} from '../../source/util/question';
+import { Operator, QuestionType, Question } from '../../source/util/question';
 
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
 
 describe('Question', () => {
-  describe('getNumberAnswer', () => {
-    describe('sum', () => {
-      it('add two numbers', () => {
-        assert.equal(getNumberAnswer({
-          type: QuestionType.SUM,
+  describe('checkAnswer', () => {
+    describe('type: RESULT', () => {
+      it('addition', () => {
+        let question: Question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.ADDITION,
           operands: [2, 2],
-        }), 4);
-        assert.equal(getNumberAnswer({
-          type: QuestionType.SUM,
+        });
+        assert.isTrue(question.checkNumberAnswer(4));
+        assert.isFalse(question.checkNumberAnswer(3));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.ADDITION,
           operands: [-4, 10],
-        }), 6);
-        assert.equal(getNumberAnswer({
-          type: QuestionType.SUM,
+        });
+        assert.isTrue(question.checkNumberAnswer(6));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.ADDITION,
           operands: [0.2, 0.7],
-        }), 0.9);
+        });
+        assert.isTrue(question.checkNumberAnswer(0.9));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.ADDITION,
+          operands: [0.2, 0.7, -1, 0.9],
+        });
+        assert.isTrue(question.checkNumberAnswer(0.8));
       });
 
-      it('add multiple numbers', () => {
-        assert.equal(getNumberAnswer({
-          type: QuestionType.SUM,
-          operands: [2, 2, -4, 10, 0.2, 0.7],
-        }), 10.9);
+      it('subtraction', () => {
+        let question: Question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.SUBTRACTION,
+          operands: [2, 2],
+        });
+        assert.isTrue(question.checkNumberAnswer(0));
+        assert.isFalse(question.checkNumberAnswer(1));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.SUBTRACTION,
+          operands: [-4, 10],
+        });
+        assert.isTrue(question.checkNumberAnswer(-14));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.SUBTRACTION,
+          operands: [0.2, 0.7],
+        });
+        assert.isTrue(question.checkNumberAnswer(-0.5));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.SUBTRACTION,
+          operands: [0.2, 0.7, -1, 0.9],
+        });
+        assert.isTrue(question.checkNumberAnswer(-0.4));
+      });
+
+      it('multiplication', () => {
+        let question: Question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.MULTIPLICATION,
+          operands: [2, 2],
+        });
+        assert.isTrue(question.checkNumberAnswer(4));
+        assert.isFalse(question.checkNumberAnswer(1));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.MULTIPLICATION,
+          operands: [-4, 10],
+        });
+        assert.isTrue(question.checkNumberAnswer(-40));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.MULTIPLICATION,
+          operands: [0.2, 0.7],
+        });
+        assert.isTrue(question.checkNumberAnswer(0.14));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.MULTIPLICATION,
+          operands: [0.2, 0.7, -1, 0.9],
+        });
+        assert.isTrue(question.checkNumberAnswer(-0.126));
+      });
+
+      it('division', () => {
+        let question: Question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.DIVISION,
+          operands: [2, 2],
+        });
+        assert.isTrue(question.checkNumberAnswer(1));
+        assert.isFalse(question.checkNumberAnswer(2));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.DIVISION,
+          operands: [-4, 10],
+        });
+        assert.isTrue(question.checkNumberAnswer(-0.4));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.DIVISION,
+          operands: [0.7, 0.2],
+        });
+        assert.isTrue(question.checkNumberAnswer(3.5));
+
+        question = new Question({
+          type: QuestionType.RESULT,
+          operator: Operator.DIVISION,
+          operands: [0.7, 0.2, -1, 0.5],
+        });
+        assert.isTrue(question.checkNumberAnswer(-7));
       });
     });
 
-    it('arithmetic progression sum', () => {
-      assert.equal(getNumberAnswer({
-        type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
-        operands: [1, 1, 10],
-      }), 55);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
-        operands: [2, 0.01, 7],
-      }), 14.21);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
-        operands: [10, -2, 11],
-      }), 0);
+    describe('type: ESTIMATE', () => {
+      it('addition', () => {
+        const question: Question = new Question({
+          type: QuestionType.ESTIMATE,
+          operator: Operator.ADDITION,
+          operands: [50, 50],
+          estimateDetails: {
+            acceptableRelativeError: 0.01,
+          },
+        });
+        assert.isTrue(question.checkNumberAnswer(100));
+        assert.isTrue(question.checkNumberAnswer(100.1));
+        assert.isTrue(question.checkNumberAnswer(101));
+        assert.isTrue(question.checkNumberAnswer(99));
+        assert.isFalse(question.checkNumberAnswer(101.1));
+        assert.isFalse(question.checkNumberAnswer(98.9));
+      });
     });
 
-    it('subtraction', () => {
-      assert.equal(getNumberAnswer({
-        type: QuestionType.SUBTRACTION,
-        operands: [2, 2],
-      }), 0);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.SUBTRACTION,
-        operands: [-4, 10],
-      }), -14);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.SUBTRACTION,
-        operands: [0.2, 0.7],
-      }), -0.5);
-    });
+    describe('type: DIGIT_CHECK', () => {
+      it('multiplication', () => {
+        let question: Question = new Question({
+          type: QuestionType.DIGIT_CHECK,
+          operator: Operator.MULTIPLICATION,
+          operands: [13, 7],
+          digitCheckDetails: {
+            proposedResult: 91,
+          },
+        });
+        assert.isTrue(question.checkBooleanAnswer(true));
+        assert.isFalse(question.checkBooleanAnswer(false));
 
-    it('multiplication', () => {
-      assert.equal(getNumberAnswer({
-        type: QuestionType.MULTIPLICATION,
-        operands: [2, 2],
-      }), 4);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.MULTIPLICATION,
-        operands: [-4, 10],
-      }), -40);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.MULTIPLICATION,
-        operands: [0.2, 0.7],
-      }), 0.14);
-    });
+        question = new Question({
+          type: QuestionType.DIGIT_CHECK,
+          operator: Operator.MULTIPLICATION,
+          operands: [13, 7],
+          digitCheckDetails: {
+            proposedResult: 92,
+          },
+        });
+        assert.isFalse(question.checkBooleanAnswer(true));
+        assert.isTrue(question.checkBooleanAnswer(false));
 
-    it('division', () => {
-      assert.equal(getNumberAnswer({
-        type: QuestionType.DIVISION,
-        operands: [2, 2],
-      }), 1);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.DIVISION,
-        operands: [-4, 10],
-      }), -0.4);
-      assert.equal(getNumberAnswer({
-        type: QuestionType.DIVISION,
-        operands: [0.7, 0.2],
-      }), 3.5);
-    });
-  });
-
-  describe('getBooleanAnswer', () => {
-    it('addition digit sum check', () => {
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, -3],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
-        operands: [0.2, 0.7, 0.09],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, 5],
-      }), false);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.ADDITION_DIGIT_SUM_CHECK,
-        operands: [0.2, 0.7, 0.15],
-      }), false);
-    });
-
-    it('subtraction digit sum check', () => {
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, 4],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
-        operands: [0.7, 0.2, 0.05],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, 5],
-      }), false);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
-        operands: [0.7, 0.2, 0.15],
-      }), false);
-    });
-
-    it('multiplication digit sum check', () => {
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-        operands: [2, 2, 4],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, -40],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-        operands: [0.2, 0.7, 0.14],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-        operands: [2, 2, 5],
-      }), false);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, -41],
-      }), false);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-        operands: [0.2, 0.7, 0.15],
-      }), false);
-    });
-
-    it('division digit sum check', () => {
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.DIVISION_DIGIT_SUM_CHECK,
-        operands: [2, 2, 1],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.DIVISION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, -0.4],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.DIVISION_DIGIT_SUM_CHECK,
-        operands: [0.7, 0.2, 3.5],
-      }), true);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.DIVISION_DIGIT_SUM_CHECK,
-        operands: [2, 2, 2],
-      }), false);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.DIVISION_DIGIT_SUM_CHECK,
-        operands: [-4, 10, -0.8],
-      }), false);
-      assert.equal(getBooleanAnswer({
-        type: QuestionType.DIVISION_DIGIT_SUM_CHECK,
-        operands: [0.7, 0.2, 4.5],
-      }), false);
+        question = new Question({
+          type: QuestionType.DIGIT_CHECK,
+          operator: Operator.MULTIPLICATION,
+          operands: [13, 7],
+          digitCheckDetails: {
+            // Even though this isn't the right answer, it has the same digit sum as the right
+            // answer.
+            proposedResult: 1,
+          },
+        });
+        assert.isTrue(question.checkBooleanAnswer(true));
+        assert.isFalse(question.checkBooleanAnswer(false));
+      });
     });
   });
 });

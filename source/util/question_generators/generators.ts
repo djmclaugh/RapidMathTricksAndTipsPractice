@@ -1,11 +1,11 @@
 import {
+  Operator,
   Question,
-  newAddition,
+  newBinaryOperation,
   newSum,
-  newArithmeticProgressionSum,
-  newSubtraction,
   newMultiplication,
   newDivision,
+  newArithmeticProgressionSum,
 } from '../question';
 import { randomInt, randomFromArray, suffle } from '../random_util';
 import {
@@ -27,11 +27,17 @@ export interface QuestionGenerator {
 }
 
 function randomAdditionOrder(a: number, b: number): Question {
-  return randomFromArray([newAddition(a, b), newAddition(b, a)]);
+  return randomFromArray([
+    newBinaryOperation(a, b, Operator.ADDITION),
+    newBinaryOperation(b, a, Operator.ADDITION),
+  ]);
 }
 
 function randomMultiplicationOrder(a: number, b: number): Question {
-  return randomFromArray([newMultiplication(a, b), newMultiplication(b, a)]);
+  return randomFromArray([
+    newBinaryOperation(a, b, Operator.MULTIPLICATION),
+    newBinaryOperation(b, a, Operator.MULTIPLICATION),
+  ]);
 }
 
 const generator1 = {
@@ -285,14 +291,14 @@ const generator29 = {
   generator: function(): Question {
     const difference = 11 + randomInt(90);
     const minuend = 1 + randomInt(99 - difference);
-    return newSubtraction(minuend + difference, minuend);
+    return newBinaryOperation(minuend + difference, minuend, Operator.SUBTRACTION);
   },
 };
 
 const generator30 = {
   name: 'Subtract by adding (variation)',
   generator: function(): Question {
-    return newSubtraction(101 + randomInt(70), 99 - randomInt(70));
+    return newBinaryOperation(101 + randomInt(70), 99 - randomInt(70), Operator.SUBTRACTION);
   },
 };
 
@@ -303,7 +309,7 @@ const generator31 = {
     const subtrahend = (subtrahendTensDigit * 10) + randomInt(8);
     const minuendTensDigit = randomInt(subtrahendTensDigit);
     const minuend = (minuendTensDigit * 10) + 8 + randomInt(1);
-    return newSubtraction(subtrahend, minuend);
+    return newBinaryOperation(subtrahend, minuend, Operator.SUBTRACTION);
   },
 };
 
@@ -370,14 +376,14 @@ const generator41 = {
     const subtrahendTensDigit = 2 + randomInt(19);
     const minuendTensDigit = 1 + randomInt(subtrahendTensDigit - 2);
     const minuend = (minuendTensDigit * 10) + (1 + randomInt(9));
-    return newSubtraction(subtrahendTensDigit * 10, minuend);
+    return newBinaryOperation(subtrahendTensDigit * 10, minuend, Operator.SUBTRACTION);
   },
 };
 
 const generator42 = {
   name: 'Check additions and subtractions',
-  generator: generateQuestionForTrick42
-}
+  generator: generateQuestionForTrick42,
+};
 
 const generator43 = {
   name: 'Multiplying by 75',

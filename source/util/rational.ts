@@ -8,6 +8,9 @@ function gcd(a: number, b: number): number {
 }
 
 export class Rational {
+  static ZERO: Rational = new Rational(1, 1);
+  static ONE: Rational = new Rational(1, 1);
+
   constructor(private dividend: number, private divisor: number) {
     assert(Number.isInteger(dividend));
     assert(Number.isInteger(divisor));
@@ -19,6 +22,10 @@ export class Rational {
     const factor = gcd(Math.abs(this.dividend), Math.abs(this.divisor));
     this.dividend /= factor;
     this.divisor /= factor;
+  }
+
+  public equals(x: Rational): boolean {
+    return this.dividend === x.dividend && this.divisor === x.divisor;
   }
 
   public isInteger(): boolean {

@@ -1,4 +1,4 @@
-import { Question, newMultiplicationDigitSumCheck, newDivisionDigitSumCheck } from '../question';
+import { Operator, Question, newDigitSumCheck } from '../question';
 import { randomFromArray } from '../random_util';
 import { randomNonTrivialTwoDigitFactor } from './generator_util';
 
@@ -24,7 +24,7 @@ function generateMultiplication(): Question {
     product += randomFromArray(OFFSETS);
   }
 
-  return newMultiplicationDigitSumCheck(a, b, product);
+  return newDigitSumCheck(a, b, Operator.MULTIPLICATION, product);
 }
 
 function generateDivision(): Question {
@@ -37,5 +37,5 @@ function generateDivision(): Question {
     product += randomFromArray(OFFSETS);
   }
 
-  return newDivisionDigitSumCheck(product, b, a);
+  return newDigitSumCheck(product, b, Operator.DIVISION, a);
 }

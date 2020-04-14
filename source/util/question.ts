@@ -5,223 +5,226 @@ function assertNever(x: never): never {
   throw new Error('Unexpected object: ' + x);
 }
 
-export enum QuestionType {
-  SUM,
-  ARITHMETIC_PROGRESSION_SUM,
+export enum Operator {
+  ADDITION,
   SUBTRACTION,
   MULTIPLICATION,
   DIVISION,
-  ADDITION_DIGIT_SUM_CHECK,
-  SUBTRACTION_DIGIT_SUM_CHECK,
-  MULTIPLICATION_DIGIT_SUM_CHECK,
-  DIVISION_DIGIT_SUM_CHECK,
 }
 
-export const QUESTION_TYPES_WITH_NUMBER_ANSWER = [
-  QuestionType.SUM,
-  QuestionType.ARITHMETIC_PROGRESSION_SUM,
-  QuestionType.SUBTRACTION,
-  QuestionType.MULTIPLICATION,
-  QuestionType.DIVISION,
-];
+function operatorToFunction(o: Operator): ((a: Rational, b: Rational) => Rational) {
+  switch (o) {
+    case Operator.ADDITION:
+      return Rational.add;
+    case Operator.SUBTRACTION:
+      return Rational.sub;
+    case Operator.MULTIPLICATION:
+      return Rational.mult;
+    case Operator.DIVISION:
+      return Rational.div;
+    default:
+      assertNever(o);
+  }
+}
 
-export const QUESTION_TYPES_WITH_BOOLEAN_ANSWER = [
-  QuestionType.ADDITION_DIGIT_SUM_CHECK,
-  QuestionType.SUBTRACTION_DIGIT_SUM_CHECK,
-  QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-  QuestionType.DIVISION_DIGIT_SUM_CHECK,
-];
+export enum QuestionType {
+  RESULT,
+  ESTIMATE,
+  DIGIT_CHECK,
+}
 
-export interface Question {
+export interface QuestionData {
   type: QuestionType,
-  operands: number[]
+  operator: Operator,
+  operands: number[],
+  // Set if and only if the type is ESTIMATE
+  estimateDetails?: {
+    // All answers in the range
+    // [result * (1 - acceptableRelativeError), result * (1 + acceptableRelativeError)] will be
+    // considered correct
+    acceptableRelativeError: number
+  }
+  // Set if and only if the type is DIGIT_CHECK
+  digitCheckDetails?: {
+    proposedResult: number
+  }
 }
 
-export function newAddition(a: number, b: number) {
-  return { type: QuestionType.SUM, operands: [a, b] };
+export class Question {
+  public readonly data: QuestionData
+
+  constructor(data: QuestionData) {
+    if (data.type === QuestionType.ESTIMATE) {
+      assert(data.estimateDetails !== undefined);
+    }
+    if (data.type === QuestionType.DIGIT_CHECK) {
+      assert(data.digitCheckDetails !== undefined);
+    }
+    this.data = data;
+  };
+
+  public expectsNumberAnswer(): boolean {
+    return this.data.type === QuestionType.RESULT || this.data.type === QuestionType.ESTIMATE;
+  }
+
+  public expectsBooleanAnswer(): boolean {
+    return this.data.type === QuestionType.DIGIT_CHECK;
+  }
+
+  public checkNumberAnswer(answer: number) {
+    return isCorrectNumberAnswer(this.data, answer);
+  }
+
+  public checkBooleanAnswer(answer: boolean) {
+    return isCorrectBooleanAnswer(this.data, answer);
+  }
+
+  // Usefull for the UI to know since if the operands have some kind of pattern to them, we don't
+  // have to show them all.
+  // Returns the number of inital terms needed to understand the pattern. The final term will have
+  // to shown regardles to at least know how many operands there are in total.
+  // Returns this.data.operands.length if the operands to not follow a commonly known pattern and
+  // all of them have to be shown.
+  public numberOfOperandsNeededToUnderstandPattern(): number {
+    if (this.areOperandsArithmeticProgression()) {
+      // If three operands with the same consecutive difference are shown followed by elipses, it's
+      // generaly understood that the rest of the operands follow the same arithmetic progression.
+      return 3;
+    }
+    return this.data.operands.length;
+  }
+
+  private areOperandsArithmeticProgression(): boolean {
+    const operands = this.data.operands;
+    if (operands.length < 3) {
+      // vacuously true...
+      return true;
+    }
+    const difference: Rational =
+        Rational.sub(Rational.fromNumber(operands[1]), Rational.fromNumber(operands[0]));
+    for (let i = 2; i < operands.length; ++i) {
+      const currentDiff =
+          Rational.sub(Rational.fromNumber(operands[i]), Rational.fromNumber(operands[i - 1]));
+      if (!difference.equals(currentDiff)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
-export function newSum(summands:number[]) {
-  return { type: QuestionType.SUM, operands: summands };
+export function newSum(summands:number[]): Question {
+  return new Question({
+    type: QuestionType.RESULT,
+    operator: Operator.ADDITION,
+    operands: summands,
+  });
 }
 
 export function newArithmeticProgressionSum(
   initialTerm: number,
   difference: number,
   numberOfTerms: number,
-) {
-  return {
-    type: QuestionType.ARITHMETIC_PROGRESSION_SUM,
-    operands: [initialTerm, difference, numberOfTerms],
-  };
+): Question {
+  const summands: number[] = [];
+  for (let i = 0; i < numberOfTerms; ++i) {
+    summands.push(initialTerm + (i * difference));
+  }
+  return new Question({
+    type: QuestionType.RESULT,
+    operator: Operator.ADDITION,
+    operands: summands,
+  });
 }
 
-export function newSubtraction(a: number, b: number) {
-  return { type: QuestionType.SUBTRACTION, operands: [a, b] };
+export function newBinaryOperation(a: number, b: number, operator: Operator): Question {
+  return new Question({ type: QuestionType.RESULT, operator: operator, operands: [a, b] });
 }
 
-export function newMultiplication(a: number, b: number) {
-  return { type: QuestionType.MULTIPLICATION, operands: [a, b] };
+export function newMultiplication(a: number, b: number): Question {
+  return newBinaryOperation(a, b, Operator.MULTIPLICATION);
 }
 
-export function newDivision(a: number, b: number) {
-  return { type: QuestionType.DIVISION, operands: [a, b] };
+export function newDivision(a: number, b: number): Question {
+  return newBinaryOperation(a, b, Operator.DIVISION);
 }
 
-export function newAdditionDigitSumCheck(a: number, b: number, sum: number) {
-  return { type: QuestionType.ADDITION_DIGIT_SUM_CHECK, operands: [a, b, sum] };
+export function newEstimate(
+  a: number,
+  b: number,
+  operator: Operator,
+  acceptableRelativeError: number,
+): Question {
+  return new Question({
+    type: QuestionType.ESTIMATE,
+    operator: operator,
+    operands: [a, b],
+    estimateDetails: {
+      acceptableRelativeError: acceptableRelativeError,
+    },
+  });
 }
 
-export function newSubtractionDigitSumCheck(a: number, b: number, difference: number) {
-  return { type: QuestionType.SUBTRACTION_DIGIT_SUM_CHECK, operands: [a, b, difference] };
-}
-
-export function newMultiplicationDigitSumCheck(a: number, b: number, product: number) {
-  return { type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK, operands: [a, b, product] };
-}
-
-export function newDivisionDigitSumCheck(a: number, b: number, quotient: number) {
-  return { type: QuestionType.DIVISION_DIGIT_SUM_CHECK, operands: [a, b, quotient] };
+export function newDigitSumCheck(
+  a: number,
+  b: number,
+  operator: Operator,
+  proposedResult: number,
+): Question {
+  return new Question({
+    type: QuestionType.DIGIT_CHECK,
+    operator: operator,
+    operands: [a, b],
+    digitCheckDetails: {
+      proposedResult: proposedResult,
+    },
+  });
 }
 
 export function newDivisionFromMultiplication(multiplication: Question): Question {
-  assert(multiplication.type === QuestionType.MULTIPLICATION);
-  return {
-    type: QuestionType.DIVISION,
-    operands: [getNumberAnswer(multiplication), multiplication.operands[0]],
-  };
+  assert(multiplication.data.type === QuestionType.RESULT);
+  assert(multiplication.data.operator === Operator.MULTIPLICATION);
+  assert(multiplication.data.operands.length === 2);
+  return newBinaryOperation(
+    evaluateOperation(multiplication.data),
+    multiplication.data.operands[0],
+    Operator.DIVISION,
+  );
 }
 
-export function getNumberAnswer(question: Question): number {
-  switch (question.type) {
-    case QuestionType.SUM:
-      return getSumAnswer(question);
-    case QuestionType.ARITHMETIC_PROGRESSION_SUM:
-      return getArithmeticProgressionSumAnswer(question);
-    case QuestionType.SUBTRACTION:
-      return getSubtractionAnswer(question);
-    case QuestionType.MULTIPLICATION:
-      return getMultiplicationAnswer(question);
-    case QuestionType.DIVISION:
-      return getDivisionAnswer(question);
-    case QuestionType.ADDITION_DIGIT_SUM_CHECK:
-    case QuestionType.SUBTRACTION_DIGIT_SUM_CHECK:
-    case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
-    case QuestionType.DIVISION_DIGIT_SUM_CHECK:
-      throw new Error('Answer to provided question is not a number');
-    default:
-      return assertNever(question.type);
+function evaluateOperation(question: QuestionData): number {
+  const operation: (a: Rational, b: Rational) => Rational = operatorToFunction(question.operator);
+  const operands: Rational[] = question.operands.map((x) => Rational.fromNumber(x));
+  const firstOperand: Rational = operands[0];
+  const restOfOperands: Rational[] = operands.slice(1);
+  const result: Rational = restOfOperands.reduce((accumulator, currentValue) => {
+    return operation(accumulator, currentValue);
+  }, firstOperand);
+  return result.toNumber();
+}
+
+export function isCorrectNumberAnswer(question: QuestionData, answer: number) {
+  if (question.type === QuestionType.RESULT) {
+    return answer === evaluateOperation(question);
+  } else if (question.type === QuestionType.ESTIMATE) {
+    const exactAnswer = evaluateOperation(question);
+    const lowerBound = exactAnswer * (1 - question.estimateDetails!.acceptableRelativeError);
+    const upperBound = exactAnswer * (1 + question.estimateDetails!.acceptableRelativeError);
+    return lowerBound <= answer && answer <= upperBound;
   }
+  throw Error(`A number answer is only expected for questions of type RESULT and ESTIMATE, not for
+    questions of type ${question.type}.`);
 }
 
-export function getBooleanAnswer(question: Question): boolean {
-  switch (question.type) {
-    case QuestionType.SUM:
-    case QuestionType.ARITHMETIC_PROGRESSION_SUM:
-    case QuestionType.SUBTRACTION:
-    case QuestionType.MULTIPLICATION:
-    case QuestionType.DIVISION:
-      throw new Error('Answer to provided question is not a boolean');
-    case QuestionType.ADDITION_DIGIT_SUM_CHECK:
-      return getAdditionDigitSumCheckAnswer(question);
-    case QuestionType.SUBTRACTION_DIGIT_SUM_CHECK:
-      return getSubtractionDigitSumCheckAnswer(question);
-    case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
-      return getMultiplicationDigitSumCheckAnswer(question);
-    case QuestionType.DIVISION_DIGIT_SUM_CHECK:
-      return getDivisionDigitSumCheckAnswer(question);
-    default:
-      return assertNever(question.type);
+export function isCorrectBooleanAnswer(question: QuestionData, answer: boolean) {
+  if (question.type === QuestionType.DIGIT_CHECK) {
+    const proposedResult = question.digitCheckDetails!.proposedResult;
+    const exactResult = evaluateOperation(question);
+    const hasSameDigitSum = digitSumMod9(proposedResult) === digitSumMod9(exactResult);
+    return answer === hasSameDigitSum;
   }
-}
-
-function getSumAnswer(question: Question): number {
-  assert(question.type === QuestionType.SUM);
-  let total: Rational = new Rational(0, 1);
-  for (const summand of question.operands) {
-    total = Rational.add(total, Rational.fromNumber(summand));
-  }
-  return total.toNumber();
-}
-
-function getArithmeticProgressionSumAnswer(question: Question): number {
-  assert(question.type === QuestionType.ARITHMETIC_PROGRESSION_SUM);
-  assert(question.operands.length === 3);
-  // Initital term
-  const a = Rational.fromNumber(question.operands[0]);
-  // Difference between terms
-  const d = Rational.fromNumber(question.operands[1]);
-  // Number of terms
-  const n = Rational.fromNumber(question.operands[2]);
-
-  // Constants that will be needed in rational form
-  const one = new Rational(1, 1);
-  const two = new Rational(2, 1);
-
-  const lastTerm = Rational.add(a, Rational.mult(Rational.sub(n, one), d));
-  const sum = Rational.mult(Rational.div(Rational.add(a, lastTerm), two), n);
-
-  return sum.toNumber();
-}
-
-function getSubtractionAnswer(question: Question): number {
-  assert(question.type === QuestionType.SUBTRACTION);
-  assert(question.operands.length === 2);
-  const a: Rational = Rational.fromNumber(question.operands[0]);
-  const b: Rational = Rational.fromNumber(question.operands[1]);
-  return Rational.sub(a, b).toNumber();
-}
-
-function getMultiplicationAnswer(question: Question): number {
-  assert(question.type === QuestionType.MULTIPLICATION);
-  assert(question.operands.length === 2);
-  const a: Rational = Rational.fromNumber(question.operands[0]);
-  const b: Rational = Rational.fromNumber(question.operands[1]);
-  return Rational.mult(a, b).toNumber();
-}
-
-function getDivisionAnswer(question: Question): number {
-  assert(question.type === QuestionType.DIVISION);
-  assert(question.operands.length === 2);
-  const a: Rational = Rational.fromNumber(question.operands[0]);
-  const b: Rational = Rational.fromNumber(question.operands[1]);
-  return Rational.div(a, b).toNumber();
-}
-
-function getAdditionDigitSumCheckAnswer(question: Question): boolean {
-  assert(question.type === QuestionType.ADDITION_DIGIT_SUM_CHECK);
-  assert(question.operands.length === 3);
-  const digitSumA: number = digitSumMod9(question.operands[0]);
-  const digitSumB: number = digitSumMod9(question.operands[1]);
-  const digitSumSum: number = digitSumMod9(question.operands[2]);
-  return digitSumMod9(digitSumA + digitSumB - digitSumSum) === 0;
-}
-
-function getSubtractionDigitSumCheckAnswer(question: Question): boolean {
-  assert(question.type === QuestionType.SUBTRACTION_DIGIT_SUM_CHECK);
-  assert(question.operands.length === 3);
-  const digitSumA: number = digitSumMod9(question.operands[0]);
-  const digitSumB: number = digitSumMod9(question.operands[1]);
-  const digitSumDifference: number = digitSumMod9(question.operands[2]);
-  return digitSumMod9(digitSumA - digitSumB - digitSumDifference) === 0;
-}
-
-function getMultiplicationDigitSumCheckAnswer(question: Question): boolean {
-  assert(question.type === QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK);
-  assert(question.operands.length === 3);
-  const digitSumMultiplicand: number = digitSumMod9(question.operands[0]);
-  const digitSumMultiplier: number = digitSumMod9(question.operands[1]);
-  const digitSumProduct: number = digitSumMod9(question.operands[2]);
-  return digitSumMod9(digitSumMultiplier * digitSumMultiplicand) === digitSumProduct;
-}
-
-function getDivisionDigitSumCheckAnswer(question: Question): boolean {
-  assert(question.type === QuestionType.DIVISION_DIGIT_SUM_CHECK);
-  assert(question.operands.length === 3);
-  return getMultiplicationDigitSumCheckAnswer({
-    type: QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK,
-    operands: [question.operands[2], question.operands[1], question.operands[0]],
-  });
+  throw Error(`A boolean answer is only expected for questions of type DIGIT_CHECK, not for
+    questions of type ${question.type}.`);
 }
 
 function digitSumMod9(x: number): number {

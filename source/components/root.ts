@@ -76,7 +76,7 @@ export const RootComponent = Vue.extend({
       const question = this.questions[i];
       questionElements.push(createElement('question-card', {
         props: {
-          questionData: question,
+          question: question,
           id: i,
         },
         on: {

@@ -1,75 +1,68 @@
 import Vue, { CreateElement, VNode } from 'vue';
-import { Question, QuestionType, getBooleanAnswer, getNumberAnswer } from '../util/question';
+import { Operator, Question, QuestionType } from '../util/question';
 import { RadioGroupComponent } from './shared/radio_group';
 
 const answerInputRef = 'QUESTIONT_CARD_COMPONENT_ANSWER';
+
+function assertNever(x: never): never {
+  throw new Error('Unexpected object: ' + x);
+}
 
 enum InputType {
   NUMBER,
   POSSIBLY_CORRECT_OR_DEFINITLY_INCORRECT,
 }
 
-function assertNever(x: never): never {
-  throw new Error('Unexpected object: ' + x);
+function inputTypeForQuestion(question: Question): InputType {
+  if (question.expectsNumberAnswer()) {
+    return InputType.NUMBER;
+  } else if (question.expectsBooleanAnswer()) {
+    return InputType.POSSIBLY_CORRECT_OR_DEFINITLY_INCORRECT;
+  }
+  throw new Error(`Unsupported input type for question: ${question}`);
+}
+
+function symboleForOperator(operator: Operator): string {
+  switch (operator) {
+    case Operator.ADDITION:
+      return '+';
+    case Operator.SUBTRACTION:
+      return '-';
+    case Operator.MULTIPLICATION:
+      return '*';
+    case Operator.DIVISION:
+      return '/';
+    default:
+      return assertNever(operator);
+  }
 }
 
 function stringForQuestion(question: Question): string {
-  const operands = question.operands;
-  switch (question.type) {
-    case QuestionType.SUM:
-      return operands.join(' + ');
-    case QuestionType.ARITHMETIC_PROGRESSION_SUM: {
-      // Initial terms
-      const a = operands[0];
-      // Difference between terms
-      const d = operands[1];
-      // Number of terms
-      const n = operands[2];
-      if (operands[2] > 6) {
-        return [a, a + d, a + (2 * d)].join(' + ') + ' + ... + ' + (a + ((n - 1) * d));
-      } else {
-        let text = '' + a;
-        for (let i = 1; i < n; ++i) {
-          text += ' + ' + (a + (i * d));
-        }
-        return text;
-      }
-    }
-    case QuestionType.SUBTRACTION:
-      return operands.join(' - ');
-    case QuestionType.MULTIPLICATION:
-      return operands.join(' * ');
-    case QuestionType.DIVISION:
-      return operands.join(' / ');
-    case QuestionType.ADDITION_DIGIT_SUM_CHECK:
-      return `${operands[0]} + ${operands[1]} ?= ${operands[2]}`;
-    case QuestionType.SUBTRACTION_DIGIT_SUM_CHECK:
-      return `${operands[0]} - ${operands[1]} ?= ${operands[2]}`;
-    case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
-      return `${operands[0]} * ${operands[1]} ?= ${operands[2]}`;
-    case QuestionType.DIVISION_DIGIT_SUM_CHECK:
-      return `${operands[0]} / ${operands[1]} ?= ${operands[2]}`;
-    default:
-      return assertNever(question.type);
+  const operands = question.data.operands;
+  const operatorSymbole = symboleForOperator(question.data.operator);
+  let text = '';
+  const operandsToShow = question.numberOfOperandsNeededToUnderstandPattern();
+  if (operands.length > 5 && operandsToShow < operands.length) {
+    const initialTerms = operands.slice(0, operandsToShow).join(` ${operatorSymbole} `);
+    const lastOperand = '' + operands[operands.length - 1];
+    text += [initialTerms, '...', lastOperand].join(` ${operatorSymbole} `);
+  } else {
+    text += operands.join(` ${operatorSymbole} `);
   }
-}
-
-function inputTypeForQuestion(question: Question): InputType {
-  switch (question.type) {
-    case QuestionType.SUM:
-    case QuestionType.ARITHMETIC_PROGRESSION_SUM:
-    case QuestionType.SUBTRACTION:
-    case QuestionType.MULTIPLICATION:
-    case QuestionType.DIVISION:
-      return InputType.NUMBER;
-    case QuestionType.ADDITION_DIGIT_SUM_CHECK:
-    case QuestionType.SUBTRACTION_DIGIT_SUM_CHECK:
-    case QuestionType.MULTIPLICATION_DIGIT_SUM_CHECK:
-    case QuestionType.DIVISION_DIGIT_SUM_CHECK:
-      return InputType.POSSIBLY_CORRECT_OR_DEFINITLY_INCORRECT;
+  switch (question.data.type) {
+    case QuestionType.RESULT:
+      text += ' = ';
+      break;
+    case QuestionType.ESTIMATE:
+      text += ' ≈ ';
+      break;
+    case QuestionType.DIGIT_CHECK:
+      text += ` ?= ${question.data.digitCheckDetails!.proposedResult}`;
+      break;
     default:
-      return assertNever(question.type);
+      return assertNever(question.data.type);
   }
+  return text;
 }
 
 export const QuestionCardComponent = Vue.extend({
@@ -83,13 +76,10 @@ export const QuestionCardComponent = Vue.extend({
     };
   },
   props: {
-    questionData: Object,
+    question: Question,
     id: Number,
   },
   computed: {
-    question(): Question {
-      return this.questionData as Question;
-    },
     questionInputType(): InputType {
       return inputTypeForQuestion(this.question);
     },
@@ -116,10 +106,10 @@ export const QuestionCardComponent = Vue.extend({
 
       switch (this.questionInputType) {
         case InputType.NUMBER:
-          isCorrect = answer === getNumberAnswer(this.question);
+          isCorrect = this.question.checkNumberAnswer(answer as number);
           break;
         case InputType.POSSIBLY_CORRECT_OR_DEFINITLY_INCORRECT:
-          isCorrect = answer === getBooleanAnswer(this.question);
+          isCorrect = this.question.checkBooleanAnswer(answer as boolean);
           break;
         default:
           return assertNever(this.questionInputType);
@@ -200,7 +190,7 @@ export const QuestionCardComponent = Vue.extend({
       attrs: {
         for: 'answer_' + this.id,
       },
-    }, this.questionText + ': ');
+    }, this.questionText);
     elements.push(questionTextNode);
 
     elements.push(this.createInputNode(createElement));
