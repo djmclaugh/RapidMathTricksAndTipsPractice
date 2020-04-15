@@ -520,6 +520,45 @@ const generator56 = {
   },
 };
 
+const generator57 = {
+  name: 'Multiply by regrouping',
+  generator: function(): Question {
+    const a = 3 + randomInt(6);
+    const b = (10 * (2 + randomInt(8))) + (1 + randomInt(7))
+    return randomMultiplicationOrder(a, b);
+  },
+};
+
+const generator58 = {
+  name: 'Multiply by augmenting',
+  generator: function(): Question {
+    const a = 3 + randomInt(5);
+    const b = (10 * (1 + randomInt(9))) + (8 + randomInt(1))
+    return randomMultiplicationOrder(a, b);
+  },
+};
+
+const generator59 = {
+  name: 'Multiply a three or more digit number by 11',
+  generator: function(): Question {
+    const x = 101 + randomInt(899);
+    return randomMultiplicationOrder(11, x);
+  },
+};
+
+const generator60 = {
+  name: 'Divide by 9, 99, 999...',
+  generator: function(): Question {
+    const divisor = Math.random() < 0.1 ? 9 : 99;
+    const x = 1 + randomInt(divisor - 1);
+    // Even though we know the exact answer for this question, it is still implemented as an
+    // estimate since there is currently no way to describe repeating digits in the UI.
+    // A precission of 0.0001 will require 4 significant digits, which is enough to see the repition
+    // pattern for divisions by 9 and 99.
+    return newEstimate(x, divisor, Operator.DIVISION, 0.0001);
+  },
+};
+
 export const GENERATORS: QuestionGenerator[] = [
   generator1,
   generator2,
@@ -573,4 +612,8 @@ export const GENERATORS: QuestionGenerator[] = [
   generator54,
   generator55,
   generator56,
+  generator57,
+  generator58,
+  generator59,
+  generator60,
 ];
