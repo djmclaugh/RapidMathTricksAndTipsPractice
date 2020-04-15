@@ -3,7 +3,10 @@ import Component from 'vue-class-component';
 
 const SingleTrickSelectorProps = Vue.extend({
   props: {
-    optionsArray: Array,
+    optionsArray: {
+      type: Array,
+      required: true,
+    },
   },
 });
 
