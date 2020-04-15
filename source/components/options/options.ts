@@ -1,6 +1,6 @@
 import Vue, { VNode } from 'vue';
 import { GENERATORS } from '../../util/question_generators/generators';
-import { SingleTrickSelectorComponent } from './single_trick_selector';
+import SingleTrickSelectorComponent from './single_trick_selector';
 import { MultipleTricksSelectorComponent } from './multiple_tricks_selector';
 import { RadioGroupComponent } from '../shared/radio_group';
 
