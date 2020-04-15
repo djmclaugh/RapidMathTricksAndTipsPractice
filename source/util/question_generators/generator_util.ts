@@ -57,3 +57,11 @@ export function randomNonTrivialTwoDigitFactor(): number {
   }
   return result;
 }
+
+export function randomOperands(min: number, max: number, numberOfOperands: number): number[] {
+  const result: number[] = [];
+  for (let i = 0; i < numberOfOperands; ++i) {
+    result.push(min + randomInt(1 + max - min));
+  }
+  return result;
+}

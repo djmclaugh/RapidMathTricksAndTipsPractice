@@ -13,6 +13,7 @@ import {
   randomSimpleFactor,
   randomTwoDigitFactor,
   randomNonTrivialTwoDigitFactor,
+  randomOperands,
   TRICKY_SQUARE_ROOTS,
   SIMPLE_FACTORS,
 } from './generator_util';
@@ -333,29 +334,45 @@ const generator32 = {
 const generator33 = {
   name: 'Add by grouping and reordering',
   generator: function(): Question {
-    const summands: number[] = [];
-    for (let i = 0; i < 8; ++i) {
-      summands.push(1 + randomInt(9));
-    }
-    return newSum(summands);
+    return newSum(randomOperands(1, 9, 8));
   },
 };
 
 const generator34 = {
   name: 'Add by without carrying',
   generator: function(): Question {
-    const summands: number[] = [];
-    for (let i = 0; i < 8; ++i) {
-      summands.push(11 + randomInt(89));
-    }
-    return newSum(summands);
+    return newSum(randomOperands(11, 99, 8));
   },
 };
 
-// TODO: Generator 35
-// TODO: Generator 36
-// TODO: Generator 37
-// TODO: Generator 38
+const generator35 = {
+  name: 'Add a column (variation 1)',
+  generator: function(): Question {
+    return newSum(randomOperands(1, 51, 6));
+  },
+};
+
+const generator36 = {
+  name: 'Add a column (variation 2)',
+  generator: function(): Question {
+    // Exactly the same as for trick 35
+    return newSum(randomOperands(1, 51, 6));
+  },
+};
+
+const generator37 = {
+  name: 'Add a with the "Cross-Out" technique',
+  generator: function(): Question {
+    return newSum(randomOperands(11, 99, 9));
+  },
+};
+
+const generator38 = {
+  name: 'Add columns in sections',
+  generator: function(): Question {
+    return newSum(randomOperands(11, 99, 10));
+  },
+};
 
 const generator39 = {
   name: 'Add a few numbers',
@@ -594,6 +611,10 @@ export const GENERATORS: QuestionGenerator[] = [
   generator32,
   generator33,
   generator34,
+  generator35,
+  generator36,
+  generator37,
+  generator38,
   generator39,
   generator40,
   generator41,
