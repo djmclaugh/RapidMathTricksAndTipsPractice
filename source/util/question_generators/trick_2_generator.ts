@@ -28,5 +28,5 @@ function generateDivision(): Question {
     b *= 10;
   }
 
-  return newDivisionFromMultiplication(newMultiplication(a, b));
+  return newDivisionFromMultiplication(newMultiplication(b, a));
 }
