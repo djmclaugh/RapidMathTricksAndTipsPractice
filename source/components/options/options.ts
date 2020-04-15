@@ -1,8 +1,8 @@
 import Vue, { VNode } from 'vue';
 import { GENERATORS } from '../../util/question_generators/generators';
-import SingleTrickSelectorComponent from './single_trick_selector';
 import { MultipleTricksSelectorComponent } from './multiple_tricks_selector';
 import { RadioGroupComponent } from '../shared/radio_group';
+import SelectorComponent from '../shared/selector';
 
 const TRICK_NAMES: string[] = GENERATORS.map((g) => g.name);
 
@@ -12,12 +12,12 @@ enum TrickSelectorType {
   MULTIPLE_TRICKS,
 }
 
-const singleSelectorRef = 'single_selector_ref';
+const selectorRef = 'selector_ref';
 const multipleSelectorRef = 'multiple_selector_ref';
 
 export const OptionsComponent = Vue.extend({
   components: {
-    singleSelector: SingleTrickSelectorComponent,
+    selector: SelectorComponent,
     multipleSelector: MultipleTricksSelectorComponent,
     radioGroup: RadioGroupComponent,
   },
@@ -47,8 +47,8 @@ export const OptionsComponent = Vue.extend({
       switch (this.trickSelectorType) {
         case TrickSelectorType.SINGLE_TRICK:
         case TrickSelectorType.ALL_TRICKS_UP_TO: {
-          const singleTrickComponent: any = this.$refs[singleSelectorRef];
-          this.updateSelectedTrick(singleTrickComponent.selectedTrick);
+          const selectorComponent: any = this.$refs[selectorRef];
+          this.updateSelectedTrick(selectorComponent.selectedIndex);
           break;
         }
         case TrickSelectorType.MULTIPLE_TRICKS: {
@@ -113,8 +113,8 @@ export const OptionsComponent = Vue.extend({
     elements.push(createElement('br'));
     elements.push(createElement('br'));
 
-    elements.push(createElement('singleSelector', {
-      ref: singleSelectorRef,
+    elements.push(createElement('selector', {
+      ref: selectorRef,
       props: {
         optionsArray: TRICK_NAMES,
       },
@@ -125,7 +125,7 @@ export const OptionsComponent = Vue.extend({
         ].includes(this.trickSelectorType),
       },
       on: {
-        updateSelectedTrick: this.updateSelectedTrick,
+        change: this.updateSelectedTrick,
       },
     }));
 

@@ -1,7 +1,7 @@
 import Vue, { CreateElement, VNode } from 'vue';
 import Component from 'vue-class-component';
 
-const SingleTrickSelectorProps = Vue.extend({
+const SelectorProps = Vue.extend({
   props: {
     optionsArray: {
       type: Array,
@@ -11,9 +11,9 @@ const SingleTrickSelectorProps = Vue.extend({
 });
 
 @Component
-export default class SingleTrickSelectorComponent extends SingleTrickSelectorProps {
+export default class SelectorComponent extends SelectorProps {
   // Data
-  selectedTrick: number = 0;
+  selectedIndex: number = 0;
 
   // Computed
   get options(): string[] {
@@ -22,15 +22,15 @@ export default class SingleTrickSelectorComponent extends SingleTrickSelectorPro
 
   // Methods
   private processChange(event: any): void {
-    this.selectedTrick = parseInt(event.target.value);
-    this.$emit('updateSelectedTrick', this.selectedTrick);
+    this.selectedIndex = parseInt(event.target.value);
+    this.$emit('change', this.selectedIndex);
   }
 
   private createOptionElement(index: number): VNode {
     return this.$createElement('option', {
       attrs: {
         value: index,
-        selected: this.selectedTrick === index,
+        selected: this.selectedIndex === index,
       },
     }, (index + 1) + '. ' + this.options[index]);
   }
@@ -44,9 +44,6 @@ export default class SingleTrickSelectorComponent extends SingleTrickSelectorPro
     }
 
     return createElement('select', {
-      attrs: {
-        id: 'trick_selector',
-      },
       on: {
         change: this.processChange,
       },
