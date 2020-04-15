@@ -111,6 +111,7 @@ export const OptionsComponent = Vue.extend({
     }));
 
     elements.push(createElement('br'));
+    elements.push(createElement('br'));
 
     elements.push(createElement('singleSelector', {
       ref: singleSelectorRef,
@@ -141,6 +142,7 @@ export const OptionsComponent = Vue.extend({
       },
     }));
 
+    elements.push(createElement('br'));
     elements.push(createElement('br'));
 
     const startButton = createElement('button', {
