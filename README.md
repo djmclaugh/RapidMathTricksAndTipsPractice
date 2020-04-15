@@ -9,4 +9,4 @@ You can build it yourself from source or you can try it out here: https://djmcla
 
 This will generate the `bundle.js` file in the `app` directory.
 
-Once `app/bundle.js` is generated, simply open `app/index.html` with your favorite browser.
+Once the `app/bundle.js` is generated, simply open `app/index.html` with your favorite browser.
