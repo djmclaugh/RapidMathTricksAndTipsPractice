@@ -27,6 +27,21 @@ function operatorToFunction(o: Operator): ((a: Rational, b: Rational) => Rationa
   }
 }
 
+function operatorInverse(o: Operator): Operator {
+  switch (o) {
+    case Operator.ADDITION:
+      return Operator.SUBTRACTION;
+    case Operator.SUBTRACTION:
+      return Operator.ADDITION;
+    case Operator.MULTIPLICATION:
+      return Operator.DIVISION;
+    case Operator.DIVISION:
+      return Operator.MULTIPLICATION;
+    default:
+      assertNever(o);
+  }
+}
+
 export enum QuestionType {
   RESULT,
   ESTIMATE,
@@ -186,14 +201,8 @@ export function newDigitSumCheck(
 }
 
 export function newDivisionFromMultiplication(multiplication: Question): Question {
-  assert(multiplication.data.type === QuestionType.RESULT);
   assert(multiplication.data.operator === Operator.MULTIPLICATION);
-  assert(multiplication.data.operands.length === 2);
-  return newBinaryOperation(
-    evaluateOperation(multiplication.data).toNumber(),
-    multiplication.data.operands[0],
-    Operator.DIVISION,
-  );
+  return new Question(inverseQuestion(multiplication.data));
 }
 
 function evaluateOperation(question: QuestionData): Rational {
@@ -206,7 +215,7 @@ function evaluateOperation(question: QuestionData): Rational {
   }, firstOperand);
 }
 
-export function isCorrectNumberAnswer(question: QuestionData, answer: number) {
+export function isCorrectNumberAnswer(question: QuestionData, answer: number): boolean {
   if (question.type === QuestionType.RESULT) {
     return answer === evaluateOperation(question).toNumber();
   } else if (question.type === QuestionType.ESTIMATE) {
@@ -221,8 +230,11 @@ export function isCorrectNumberAnswer(question: QuestionData, answer: number) {
     questions of type ${question.type}.`);
 }
 
-export function isCorrectBooleanAnswer(question: QuestionData, answer: boolean) {
+export function isCorrectBooleanAnswer(question: QuestionData, answer: boolean): boolean {
   if (question.type === QuestionType.DIGIT_CHECK) {
+    if (question.operator === Operator.SUBTRACTION || question.operator === Operator.DIVISION) {
+      return isCorrectBooleanAnswer(inverseQuestion(question), answer);
+    }
     const proposedResult = question.digitCheckDetails!.proposedResult;
     const exactResult = evaluateOperation(question).toNumber();
     const hasSameDigitSum = digitSumMod9(proposedResult) === digitSumMod9(exactResult);
@@ -230,6 +242,26 @@ export function isCorrectBooleanAnswer(question: QuestionData, answer: boolean) 
   }
   throw Error(`A boolean answer is only expected for questions of type DIGIT_CHECK, not for
     questions of type ${question.type}.`);
+}
+
+function inverseQuestion(question: QuestionData): QuestionData {
+  let newFirstOperand = evaluateOperation(question).toNumber();
+  if (question.type === QuestionType.DIGIT_CHECK) {
+    newFirstOperand = question.digitCheckDetails!.proposedResult;
+  }
+  const inverseQuestion: QuestionData = {
+    type: question.type,
+    operator: operatorInverse(question.operator),
+    operands: [newFirstOperand].concat(question.operands.slice(1).reverse()),
+  };
+  if (question.type === QuestionType.DIGIT_CHECK) {
+    inverseQuestion.digitCheckDetails = {
+      proposedResult: question.operands[0],
+    };
+  } else if (question.type === QuestionType.ESTIMATE) {
+    inverseQuestion.estimateDetails = question.estimateDetails;
+  }
+  return inverseQuestion;
 }
 
 function digitSumMod9(x: number): number {

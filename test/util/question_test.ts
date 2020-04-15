@@ -199,6 +199,18 @@ describe('Question', () => {
         assert.isTrue(question.checkBooleanAnswer(true));
         assert.isFalse(question.checkBooleanAnswer(false));
       });
+
+      it('division', () => {
+        let question: Question = new Question({
+          type: QuestionType.DIGIT_CHECK,
+          operator: Operator.DIVISION,
+          operands: [2144, 69],
+          digitCheckDetails: {
+            proposedResult: 31,
+          },
+        });
+        assert.isTrue(question.checkBooleanAnswer(false));
+      });
     });
   });
 });
