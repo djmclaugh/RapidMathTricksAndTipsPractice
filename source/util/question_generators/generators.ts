@@ -541,7 +541,7 @@ const generator57 = {
   name: 'Multiply by regrouping',
   generator: function(): Question {
     const a = 3 + randomInt(6);
-    const b = (10 * (2 + randomInt(8))) + (1 + randomInt(7))
+    const b = (10 * (2 + randomInt(8))) + (1 + randomInt(7));
     return randomMultiplicationOrder(a, b);
   },
 };
@@ -550,7 +550,7 @@ const generator58 = {
   name: 'Multiply by augmenting',
   generator: function(): Question {
     const a = 3 + randomInt(5);
-    const b = (10 * (1 + randomInt(9))) + (8 + randomInt(1))
+    const b = (10 * (1 + randomInt(9))) + (8 + randomInt(1));
     return randomMultiplicationOrder(a, b);
   },
 };
