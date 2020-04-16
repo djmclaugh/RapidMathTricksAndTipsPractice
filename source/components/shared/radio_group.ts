@@ -1,6 +1,7 @@
 import Vue, { VNode } from 'vue';
+import Component from 'vue-class-component';
 
-export const RadioGroupComponent = Vue.extend({
+const RadioGroupProps = Vue.extend({
   props: {
     name: String,
     values: Array,
@@ -8,51 +9,58 @@ export const RadioGroupComponent = Vue.extend({
     initialValue: String,
     disabled: Boolean,
   },
-  data: function() {
-    return {
-      selectedValue: this.initialValue,
-    };
-  },
-  methods: {
-    processSelection(event: any): void {
-      this.selectedValue = event.target.value;
-      this.$emit('change', this.selectedValue);
-    },
-  },
-  render(createElement): VNode {
+});
+
+@Component
+export default class RadioGroupComponent extends RadioGroupProps {
+  // Data
+  selectedValue: string = this.initialValue;
+
+  // Methods
+  private processSelection(event: any): void {
+    this.selectedValue = event.target.value;
+    this.$emit('change', this.selectedValue);
+  }
+
+  private createRadioButtonWithLabel(index: number): VNode {
+    const value = this.values[index];
+    const buttonId = [this.name, value, 'radio_button'].join('_');
+
+    const inputElement = this.$createElement('input', {
+      attrs: {
+        id: buttonId,
+        name: this.name,
+        type: 'radio',
+        value: value,
+        checked: this.selectedValue === value,
+        disabled: this.disabled,
+      },
+      on: {
+        change: this.processSelection,
+      },
+    });
+
+    const labelElement = this.$createElement('label', {
+      attrs: {
+        for: buttonId,
+      },
+    }, this.valueDisplayNames[index] as string);
+
+    return this.$createElement('span', {
+      class: {
+        nobreak: true,
+      },
+    }, [inputElement, labelElement]);
+  }
+
+  // Hooks
+  render(): VNode {
     const elements: VNode[] = [];
 
     for (let i = 0; i < this.values.length; ++i) {
-      const value = this.values[i];
-      const buttonId = [this.name, value, 'radio_button'].join('_');
-
-      const inputElement = createElement('input', {
-        attrs: {
-          id: buttonId,
-          name: this.name,
-          type: 'radio',
-          value: value,
-          checked: this.selectedValue === value,
-          disabled: this.disabled,
-        },
-        on: {
-          change: this.processSelection,
-        },
-      });
-
-      const labelElement = createElement('label', {
-        attrs: {
-          for: buttonId,
-        },
-      }, this.valueDisplayNames[i] as string);
-
-      elements.push(createElement('span', {
-        class: {
-          nobreak: true,
-        },
-      }, [inputElement, labelElement]));
+      elements.push(this.createRadioButtonWithLabel(i));
     }
 
-    return createElement('span', elements);
-  },
-});
+    return this.$createElement('span', elements);
+  }
+}

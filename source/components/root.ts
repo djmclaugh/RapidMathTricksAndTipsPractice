@@ -1,8 +1,8 @@
 import Vue, { VNode } from 'vue';
 
 import { QuestionCardComponent } from './question_card';
-import { OptionsComponent } from './options/options';
-import { StatsComponent } from './stats';
+import OptionsComponent from './options/options';
+import StatsComponent from './stats';
 import { Question } from '../util/question';
 import { randomInt } from '../util/random_util';
 import { GENERATORS } from '../util/question_generators/generators';

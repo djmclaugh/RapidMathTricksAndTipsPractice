@@ -1,6 +1,6 @@
 import Vue, { CreateElement, VNode } from 'vue';
 import { Operator, Question, QuestionType } from '../util/question';
-import { RadioGroupComponent } from './shared/radio_group';
+import RadioGroupComponent from './shared/radio_group';
 
 const answerInputRef = 'QUESTIONT_CARD_COMPONENT_ANSWER';
 

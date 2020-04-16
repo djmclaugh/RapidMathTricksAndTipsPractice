@@ -1,7 +1,8 @@
 import Vue, { VNode } from 'vue';
+import Component from 'vue-class-component';
 import { GENERATORS } from '../../util/question_generators/generators';
-import { MultipleTricksSelectorComponent } from './multiple_tricks_selector';
-import { RadioGroupComponent } from '../shared/radio_group';
+import MultipleTricksSelectorComponent from './multiple_tricks_selector';
+import RadioGroupComponent from '../shared/radio_group';
 import SelectorComponent from '../shared/selector';
 
 const TRICK_NAMES: string[] = GENERATORS.map((g) => g.name);
@@ -12,85 +13,99 @@ enum TrickSelectorType {
   MULTIPLE_TRICKS,
 }
 
-const selectorRef = 'selector_ref';
-const multipleSelectorRef = 'multiple_selector_ref';
+const OptionsProps = Vue.extend({
+  props: {
+    // No props needed
+  },
+});
 
-export const OptionsComponent = Vue.extend({
+@Component({
   components: {
     selector: SelectorComponent,
     multipleSelector: MultipleTricksSelectorComponent,
     radioGroup: RadioGroupComponent,
   },
-  data: function() {
-    return {
-      // Create an array with GENERATORS.length elements, all initialized to false.
-      includedTricks: GENERATORS.map(() => false),
-      trickSelectorType: TrickSelectorType.SINGLE_TRICK,
-    };
-  },
-  computed: {
-    atLeastOneTrickIncluded(): boolean {
-      for (const isTrickIncluded of this.includedTricks) {
-        if (isTrickIncluded) {
-          return true;
-        }
+})
+export default class OptionsComponent extends OptionsProps {
+  // $refs override
+  selectorRef = 'selector';
+  multipleSelectorRef = 'multipleSelector';
+  $refs!: {
+    selector: SelectorComponent,
+    multipleSelector: MultipleTricksSelectorComponent,
+  }
+
+  // Data
+  includedTricks: boolean[] = GENERATORS.map(() => false);
+  trickSelectorType: TrickSelectorType = TrickSelectorType.SINGLE_TRICK;
+
+  // Computed
+  get atLeastOneTrickIncluded(): boolean {
+    for (const isTrickIncluded of this.includedTricks) {
+      if (isTrickIncluded) {
+        return true;
       }
-      return false;
-    },
-  },
-  methods: {
-    processSelectorTypeSelection(selection: string): void {
-      this.updateSelectorType(parseInt(selection));
-    },
-    updateSelectorType(type: TrickSelectorType): void {
-      this.trickSelectorType = type;
-      switch (this.trickSelectorType) {
-        case TrickSelectorType.SINGLE_TRICK:
-        case TrickSelectorType.ALL_TRICKS_UP_TO: {
-          const selectorComponent: any = this.$refs[selectorRef];
-          this.updateSelectedTrick(selectorComponent.selectedIndex);
-          break;
-        }
-        case TrickSelectorType.MULTIPLE_TRICKS: {
-          const multipleTricksComponent: any = this.$refs[multipleSelectorRef];
-          this.updateIncludedTricks(multipleTricksComponent.includedTricks.slice());
-          break;
-        }
+    }
+    return false;
+  }
+
+  // Methods
+  private processSelectorTypeSelection(selection: string): void {
+    this.updateSelectorType(parseInt(selection));
+  }
+
+  private updateSelectorType(type: TrickSelectorType): void {
+    this.trickSelectorType = type;
+    switch (this.trickSelectorType) {
+      case TrickSelectorType.SINGLE_TRICK:
+      case TrickSelectorType.ALL_TRICKS_UP_TO: {
+        this.updateSelectedTrick(this.$refs.selector.selectedIndex);
+        break;
       }
-    },
-    updateSelectedTrick(selectedTrick: number): void {
-      this.includedTricks = GENERATORS.map(() => false);
-      switch (this.trickSelectorType) {
-        case TrickSelectorType.SINGLE_TRICK:
-          this.includedTricks[selectedTrick] = true;
-          break;
-        case TrickSelectorType.ALL_TRICKS_UP_TO:
-          for (let i = 0; i <= selectedTrick; ++i) {
-            this.includedTricks[i] = true;
-          }
-          break;
-        default:
-          throw new Error(
-            `updateSelectedTrick should only be called if the trick selection type is SINGLE_TRICK
-            or ALL_TRICKS_UP_TO`);
+      case TrickSelectorType.MULTIPLE_TRICKS: {
+        this.updateIncludedTricks(this.$refs.multipleSelector.includedTricks.slice());
+        break;
       }
-    },
-    updateIncludedTricks(includedTricks: boolean[]): void {
-      this.includedTricks = includedTricks;
-    },
-    startButtonPressed(): void {
-      this.$emit('start', this.includedTricks);
-    },
-  },
+    }
+  }
+
+  private updateSelectedTrick(selectedTrick: number): void {
+    this.includedTricks = GENERATORS.map(() => false);
+    switch (this.trickSelectorType) {
+      case TrickSelectorType.SINGLE_TRICK:
+        this.includedTricks[selectedTrick] = true;
+        break;
+      case TrickSelectorType.ALL_TRICKS_UP_TO:
+        for (let i = 0; i <= selectedTrick; ++i) {
+          this.includedTricks[i] = true;
+        }
+        break;
+      default:
+        throw new Error(
+          `updateSelectedTrick should only be called if the trick selection type is SINGLE_TRICK
+          or ALL_TRICKS_UP_TO`);
+    }
+  }
+
+  private updateIncludedTricks(includedTricks: boolean[]): void {
+    this.includedTricks = includedTricks;
+  }
+
+  private startButtonPressed(): void {
+    this.$emit('start', this.includedTricks);
+  }
+
+  // Hooks
   mounted(): void {
     this.updateSelectorType(this.trickSelectorType);
-  },
-  render(createElement): VNode {
+  }
+
+  render(): VNode {
     const elements: VNode[] = [];
 
-    elements.push(createElement('legend', 'Options'));
+    elements.push(this.$createElement('legend', 'Options'));
 
-    elements.push(createElement('radioGroup', {
+    elements.push(this.$createElement('radioGroup', {
       props: {
         name: 'selector_type',
         values: [
@@ -110,11 +125,11 @@ export const OptionsComponent = Vue.extend({
       },
     }));
 
-    elements.push(createElement('br'));
-    elements.push(createElement('br'));
+    elements.push(this.$createElement('br'));
+    elements.push(this.$createElement('br'));
 
-    elements.push(createElement('selector', {
-      ref: selectorRef,
+    elements.push(this.$createElement('selector', {
+      ref: this.selectorRef,
       props: {
         optionsArray: TRICK_NAMES,
       },
@@ -129,8 +144,8 @@ export const OptionsComponent = Vue.extend({
       },
     }));
 
-    elements.push(createElement('multipleSelector', {
-      ref: multipleSelectorRef,
+    elements.push(this.$createElement('multipleSelector', {
+      ref: this.multipleSelectorRef,
       props: {
         optionsArray: TRICK_NAMES,
       },
@@ -142,10 +157,10 @@ export const OptionsComponent = Vue.extend({
       },
     }));
 
-    elements.push(createElement('br'));
-    elements.push(createElement('br'));
+    elements.push(this.$createElement('br'));
+    elements.push(this.$createElement('br'));
 
-    const startButton = createElement('button', {
+    const startButton = this.$createElement('button', {
       attrs: {
         disabled: !this.atLeastOneTrickIncluded,
       },
@@ -155,6 +170,6 @@ export const OptionsComponent = Vue.extend({
     }, 'Start!');
     elements.push(startButton);
 
-    return createElement('fieldset', elements);
-  },
-});
+    return this.$createElement('fieldset', elements);
+  }
+}

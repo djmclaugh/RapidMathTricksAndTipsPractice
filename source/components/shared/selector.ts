@@ -1,4 +1,4 @@
-import Vue, { CreateElement, VNode } from 'vue';
+import Vue, { VNode } from 'vue';
 import Component from 'vue-class-component';
 
 const SelectorProps = Vue.extend({
@@ -36,14 +36,14 @@ export default class SelectorComponent extends SelectorProps {
   }
 
   // Hooks
-  render(createElement: CreateElement): VNode {
+  render(): VNode {
     const optionElements: VNode[] = [];
 
     for (let i = 0; i < this.options.length; ++i) {
       optionElements.push(this.createOptionElement(i));
     }
 
-    return createElement('select', {
+    return this.$createElement('select', {
       on: {
         change: this.processChange,
       },
