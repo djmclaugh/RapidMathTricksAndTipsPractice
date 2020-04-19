@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import assert from 'assert';
 
 function gcd(a: number, b: number): number {
   if (b === 0) {
