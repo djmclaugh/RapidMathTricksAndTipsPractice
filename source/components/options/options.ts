@@ -1,17 +1,14 @@
 import Vue, { VNode } from 'vue';
 import Component from 'vue-class-component';
+
 import { GENERATORS } from '../../util/question_generators/generators';
 import MultipleTricksSelectorComponent from './multiple_tricks_selector';
-import RadioGroupComponent from '../shared/radio_group';
+import TrickSelectorTypeSelectorComponent, {
+  TrickSelectorType,
+} from './trick_selector_type_selector';
 import SelectorComponent from '../shared/selector';
 
 const TRICK_NAMES: string[] = GENERATORS.map((g) => g.name);
-
-enum TrickSelectorType {
-  SINGLE_TRICK,
-  ALL_TRICKS_UP_TO,
-  MULTIPLE_TRICKS,
-}
 
 const OptionsProps = Vue.extend({
   props: {
@@ -21,23 +18,24 @@ const OptionsProps = Vue.extend({
 
 @Component({
   components: {
+    trickSelectorTypeSelector: TrickSelectorTypeSelectorComponent,
     selector: SelectorComponent,
     multipleSelector: MultipleTricksSelectorComponent,
-    radioGroup: RadioGroupComponent,
   },
 })
 export default class OptionsComponent extends OptionsProps {
   // $refs override
-  selectorRef = 'selector';
-  multipleSelectorRef = 'multipleSelector';
+  private typeSelectorRef = 'typeSelector';
+  private selectorRef = 'selector';
+  private multipleSelectorRef = 'multipleSelector';
   $refs!: {
+    typeSelector: TrickSelectorTypeSelectorComponent,
     selector: SelectorComponent,
     multipleSelector: MultipleTricksSelectorComponent,
   }
 
   // Data
   includedTricks: boolean[] = GENERATORS.map(() => false);
-  trickSelectorType: TrickSelectorType = TrickSelectorType.SINGLE_TRICK;
 
   // Computed
   get atLeastOneTrickIncluded(): boolean {
@@ -50,13 +48,17 @@ export default class OptionsComponent extends OptionsProps {
   }
 
   // Methods
-  private processSelectorTypeSelection(selection: string): void {
-    this.updateSelectorType(parseInt(selection));
+  private trickSelectorType(): TrickSelectorType {
+    if (this.$refs.typeSelector) {
+      return this.$refs.typeSelector.selectedType;
+    } else {
+      // If the type selector component hasn't been mounted yet, return any selection type.
+      return TrickSelectorType.SINGLE_TRICK;
+    }
   }
 
-  private updateSelectorType(type: TrickSelectorType): void {
-    this.trickSelectorType = type;
-    switch (this.trickSelectorType) {
+  private updateSelectorType(): void {
+    switch (this.trickSelectorType()) {
       case TrickSelectorType.SINGLE_TRICK:
       case TrickSelectorType.ALL_TRICKS_UP_TO: {
         this.updateSelectedTrick(this.$refs.selector.selectedIndex);
@@ -71,7 +73,7 @@ export default class OptionsComponent extends OptionsProps {
 
   private updateSelectedTrick(selectedTrick: number): void {
     this.includedTricks = GENERATORS.map(() => false);
-    switch (this.trickSelectorType) {
+    switch (this.trickSelectorType()) {
       case TrickSelectorType.SINGLE_TRICK:
         this.includedTricks[selectedTrick] = true;
         break;
@@ -97,38 +99,25 @@ export default class OptionsComponent extends OptionsProps {
 
   // Hooks
   mounted(): void {
-    this.updateSelectorType(this.trickSelectorType);
+    this.updateSelectorType();
   }
 
   render(): VNode {
     const elements: VNode[] = [];
 
-    elements.push(this.$createElement('legend', 'Options'));
+    elements.push(this.$createElement('legend', 'Settings'));
 
-    elements.push(this.$createElement('radioGroup', {
-      props: {
-        name: 'selector_type',
-        values: [
-          '' + TrickSelectorType.SINGLE_TRICK,
-          '' + TrickSelectorType.ALL_TRICKS_UP_TO,
-          '' + TrickSelectorType.MULTIPLE_TRICKS,
-        ],
-        valueDisplayNames: [
-          'Practice Single Trick',
-          'Practice All Tricks Up To',
-          'Practice Multiple Tricks',
-        ],
-        initialValue: '' + this.trickSelectorType,
-      },
+    elements.push(this.$createElement('trickSelectorTypeSelector', {
+      ref: this.typeSelectorRef,
       on: {
-        change: this.processSelectorTypeSelection,
+        change: this.updateSelectorType,
       },
     }));
 
     elements.push(this.$createElement('br'));
-    elements.push(this.$createElement('br'));
 
-    elements.push(this.$createElement('selector', {
+    const trickSelectorLegend: VNode = this.$createElement('legend', 'Trick Selection');
+    const singleTrickSelector: VNode = this.$createElement('selector', {
       ref: this.selectorRef,
       props: {
         optionsArray: TRICK_NAMES,
@@ -137,27 +126,31 @@ export default class OptionsComponent extends OptionsProps {
         hidden: ![
           TrickSelectorType.SINGLE_TRICK,
           TrickSelectorType.ALL_TRICKS_UP_TO,
-        ].includes(this.trickSelectorType),
+        ].includes(this.trickSelectorType()),
       },
       on: {
         change: this.updateSelectedTrick,
       },
-    }));
-
-    elements.push(this.$createElement('multipleSelector', {
+    });
+    const multipleTrickSelector: VNode = this.$createElement('multipleSelector', {
       ref: this.multipleSelectorRef,
       props: {
         optionsArray: TRICK_NAMES,
       },
       attrs: {
-        hidden: this.trickSelectorType !== TrickSelectorType.MULTIPLE_TRICKS,
+        hidden: this.trickSelectorType() !== TrickSelectorType.MULTIPLE_TRICKS,
       },
       on: {
         updateIncludedTricks: this.updateIncludedTricks,
       },
-    }));
+    });
+    const trickSelectionFieldSet: VNode = this.$createElement('fieldset', [
+      trickSelectorLegend,
+      singleTrickSelector,
+      multipleTrickSelector,
+    ]);
+    elements.push(trickSelectionFieldSet);
 
-    elements.push(this.$createElement('br'));
     elements.push(this.$createElement('br'));
 
     const startButton = this.$createElement('button', {
