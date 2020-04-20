@@ -4,6 +4,7 @@ import Component from 'vue-class-component';
 const RadioGroupProps = Vue.extend({
   props: {
     name: String,
+    legend: String,
     values: Array,
     valueDisplayNames: Array,
     initialValue: String,
@@ -44,23 +45,23 @@ export default class RadioGroupComponent extends RadioGroupProps {
       attrs: {
         for: buttonId,
       },
-    }, this.valueDisplayNames[index] as string);
+    }, [inputElement, this.valueDisplayNames[index] as string]);
 
-    return this.$createElement('span', {
-      class: {
-        nobreak: true,
-      },
-    }, [inputElement, labelElement]);
+    return labelElement;
   }
 
   // Hooks
   render(): VNode {
     const elements: VNode[] = [];
 
+    if (this.legend) {
+      elements.push(this.$createElement('legend', this.legend));
+    }
+
     for (let i = 0; i < this.values.length; ++i) {
       elements.push(this.createRadioButtonWithLabel(i));
     }
 
-    return this.$createElement('span', elements);
+    return this.$createElement('fieldset', elements);
   }
 }

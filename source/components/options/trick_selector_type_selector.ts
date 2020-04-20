@@ -34,11 +34,13 @@ export default class TrickSelectorTypeSelectorComponent extends TrickSelectorTyp
 
   // Hooks
   render(): VNode {
-    const legend = this.$createElement('legend', 'Trick Selection Type');
-
-    const radioGroup = this.$createElement('radioGroup', {
+    return this.$createElement('radioGroup', {
+      class: {
+        flex: true,
+      },
       props: {
         name: 'selector_type',
+        legend: 'Trick Selection Type',
         values: [
           TrickSelectorType[TrickSelectorType.SINGLE_TRICK],
           TrickSelectorType[TrickSelectorType.ALL_TRICKS_UP_TO],
@@ -55,7 +57,5 @@ export default class TrickSelectorTypeSelectorComponent extends TrickSelectorTyp
         change: this.processChange,
       },
     });
-
-    return this.$createElement('fieldset', [legend, radioGroup]);
   }
 }

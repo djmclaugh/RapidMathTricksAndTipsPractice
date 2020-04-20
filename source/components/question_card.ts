@@ -159,6 +159,9 @@ export const QuestionCardComponent = Vue.extend({
     },
     createPossiblyCorrectOrDefinitlyIncorrectInputNode(createElement: CreateElement): VNode {
       return createElement('radioGroup', {
+        class: {
+          inline: true,
+        },
         props: {
           name: 'answer_' + this.id,
           values: [

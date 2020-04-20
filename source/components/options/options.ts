@@ -105,8 +105,6 @@ export default class OptionsComponent extends OptionsProps {
   render(): VNode {
     const elements: VNode[] = [];
 
-    elements.push(this.$createElement('legend', 'Settings'));
-
     elements.push(this.$createElement('trickSelectorTypeSelector', {
       ref: this.typeSelectorRef,
       on: {
@@ -144,7 +142,11 @@ export default class OptionsComponent extends OptionsProps {
         updateIncludedTricks: this.updateIncludedTricks,
       },
     });
-    const trickSelectionFieldSet: VNode = this.$createElement('fieldset', [
+    const trickSelectionFieldSet: VNode = this.$createElement('fieldset', {
+      class: {
+        flex: true,
+      },
+    }, [
       trickSelectorLegend,
       singleTrickSelector,
       multipleTrickSelector,
@@ -163,6 +165,6 @@ export default class OptionsComponent extends OptionsProps {
     }, 'Start!');
     elements.push(startButton);
 
-    return this.$createElement('fieldset', elements);
+    return this.$createElement('div', elements);
   }
 }

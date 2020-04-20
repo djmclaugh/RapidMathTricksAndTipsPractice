@@ -85,7 +85,13 @@ export const RootComponent = Vue.extend({
         key: this.runNumber + '-' + i,
       }));
     }
-    const elements = [optionsElement, statsElement, createElement('div', questionElements)];
+    const elements = [
+      optionsElement,
+      createElement('br'),
+      statsElement,
+      createElement('br'),
+      createElement('div', questionElements)
+    ];
     return createElement('div', elements);
   },
 });

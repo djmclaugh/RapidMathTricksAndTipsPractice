@@ -1,11 +1,22 @@
 body {
-  padding: 20px;
+  padding: 16px;
   font-family: sans-serif;
   background-color: #f9f9f9;
 }
 
 label, input, div {
   margin: 4px;
+}
+
+fieldset.flex {
+  max-width: max-content;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+fieldset.inline {
+  max-width: max-content;
+  display: inline;
 }
 
 span.nobreak {
