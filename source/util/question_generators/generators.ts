@@ -110,7 +110,7 @@ const generator8 = {
 const generator9 = {
   name: 'Multiplying by 25',
   generator: function(): Question {
-    const x = randomNonTrivialTwoDigitFactor();
+    const x = randomNonTrivialTwoDigitFactor() * 2;
     return randomMultiplicationOrder(25, x);
   },
 };
