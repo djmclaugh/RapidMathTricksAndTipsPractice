@@ -1,14 +1,15 @@
 import Vue, { VNode } from 'vue';
 import Component from 'vue-class-component';
 
-import { GENERATORS } from '../../util/question_generators/generators';
+import { TRICK_GENERATORS, QuestionGenerator } from '../../util/question_generators/generators';
+import BasicOperationSelectorComponent from './basic_operation_selector';
 import MultipleTricksSelectorComponent from './multiple_tricks_selector';
 import TrickSelectorTypeSelectorComponent, {
   TrickSelectorType,
 } from './trick_selector_type_selector';
 import SelectorComponent from '../shared/selector';
 
-const TRICK_NAMES: string[] = GENERATORS.map((g) => g.name);
+const TRICK_NAMES: string[] = TRICK_GENERATORS.map((g) => g.name);
 
 const OptionsProps = Vue.extend({
   props: {
@@ -21,6 +22,7 @@ const OptionsProps = Vue.extend({
     trickSelectorTypeSelector: TrickSelectorTypeSelectorComponent,
     selector: SelectorComponent,
     multipleSelector: MultipleTricksSelectorComponent,
+    basicSelector: BasicOperationSelectorComponent,
   },
 })
 export default class OptionsComponent extends OptionsProps {
@@ -28,23 +30,20 @@ export default class OptionsComponent extends OptionsProps {
   private typeSelectorRef = 'typeSelector';
   private selectorRef = 'selector';
   private multipleSelectorRef = 'multipleSelector';
+  private basicSelectorRef = 'basicSelector';
   $refs!: {
     typeSelector: TrickSelectorTypeSelectorComponent,
     selector: SelectorComponent,
     multipleSelector: MultipleTricksSelectorComponent,
+    basicSelector: BasicOperationSelectorComponent,
   }
 
   // Data
-  includedTricks: boolean[] = GENERATORS.map(() => false);
+  includedTricks: QuestionGenerator[] = [];
 
   // Computed
   get atLeastOneTrickIncluded(): boolean {
-    for (const isTrickIncluded of this.includedTricks) {
-      if (isTrickIncluded) {
-        return true;
-      }
-    }
-    return false;
+    return this.includedTricks.length > 0;
   }
 
   // Methods
@@ -68,18 +67,22 @@ export default class OptionsComponent extends OptionsProps {
         this.updateIncludedTricks(this.$refs.multipleSelector.includedTricks.slice());
         break;
       }
+      case TrickSelectorType.BASIC: {
+        this.setGenerator(this.$refs.basicSelector.selectedGenerator);
+        break;
+      }
     }
   }
 
   private updateSelectedTrick(selectedTrick: number): void {
-    this.includedTricks = GENERATORS.map(() => false);
+    this.includedTricks = [];
     switch (this.trickSelectorType()) {
       case TrickSelectorType.SINGLE_TRICK:
-        this.includedTricks[selectedTrick] = true;
+        this.includedTricks.push(TRICK_GENERATORS[selectedTrick]);
         break;
       case TrickSelectorType.ALL_TRICKS_UP_TO:
         for (let i = 0; i <= selectedTrick; ++i) {
-          this.includedTricks[i] = true;
+          this.includedTricks.push(TRICK_GENERATORS[i]);
         }
         break;
       default:
@@ -90,7 +93,19 @@ export default class OptionsComponent extends OptionsProps {
   }
 
   private updateIncludedTricks(includedTricks: boolean[]): void {
-    this.includedTricks = includedTricks;
+    this.includedTricks = [];
+    for (let i = 0; i <= includedTricks.length; ++i) {
+      if (includedTricks[i]) {
+        this.includedTricks.push(TRICK_GENERATORS[i]);
+      }
+    }
+  }
+
+  private setGenerator(generator: QuestionGenerator|null): void {
+    this.includedTricks = [];
+    if (generator) {
+      this.includedTricks.push(generator);
+    }
   }
 
   private startButtonPressed(): void {
@@ -142,6 +157,15 @@ export default class OptionsComponent extends OptionsProps {
         updateIncludedTricks: this.updateIncludedTricks,
       },
     });
+    const basicOperationSelector: VNode = this.$createElement('basicSelector', {
+      ref: this.basicSelectorRef,
+      attrs: {
+        hidden: this.trickSelectorType() !== TrickSelectorType.BASIC,
+      },
+      on: {
+        change: this.setGenerator,
+      },
+    });
     const trickSelectionFieldSet: VNode = this.$createElement('fieldset', {
       class: {
         flex: true,
@@ -150,6 +174,7 @@ export default class OptionsComponent extends OptionsProps {
       trickSelectorLegend,
       singleTrickSelector,
       multipleTrickSelector,
+      basicOperationSelector,
     ]);
     elements.push(trickSelectionFieldSet);
 

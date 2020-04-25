@@ -576,7 +576,39 @@ const generator60 = {
   },
 };
 
-export const GENERATORS: QuestionGenerator[] = [
+export const BASIC_GENERATORS = {
+  additonTable: (min: number, max: number) => {
+    return {
+      name: `Additon table from ${min} to ${max}`,
+      generator: function(): Question {
+        const a = min + randomInt(max + 1 - min);
+        const b = min + randomInt(max + 1 - min);
+        return newBinaryOperation(a, b, Operator.ADDITION);
+      },
+    };
+  },
+  multiplicationTable: (min: number, max: number) => {
+    return {
+      name: `Times table from ${min} to ${max}`,
+      generator: function(): Question {
+        const a = min + randomInt(max + 1 - min);
+        const b = min + randomInt(max + 1 - min);
+        return newMultiplication(a, b);
+      },
+    };
+  },
+  squares: (min: number, max: number) => {
+    return {
+      name: `Squares from ${min} to ${max}`,
+      generator: function(): Question {
+        const x = min + randomInt(max + 1 - min);
+        return newMultiplication(x, x);
+      },
+    };
+  },
+};
+
+export const TRICK_GENERATORS: QuestionGenerator[] = [
   generator1,
   generator2,
   generator3,

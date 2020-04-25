@@ -13,6 +13,7 @@ export enum TrickSelectorType {
   SINGLE_TRICK,
   ALL_TRICKS_UP_TO,
   MULTIPLE_TRICKS,
+  BASIC,
 }
 
 @Component({
@@ -45,11 +46,13 @@ export default class TrickSelectorTypeSelectorComponent extends TrickSelectorTyp
           TrickSelectorType[TrickSelectorType.SINGLE_TRICK],
           TrickSelectorType[TrickSelectorType.ALL_TRICKS_UP_TO],
           TrickSelectorType[TrickSelectorType.MULTIPLE_TRICKS],
+          TrickSelectorType[TrickSelectorType.BASIC],
         ],
         valueDisplayNames: [
           'Single Trick',
           'All Tricks Up To',
           'Multiple Tricks',
+          'Tables',
         ],
         initialValue: TrickSelectorType[this.selectedType],
       },
