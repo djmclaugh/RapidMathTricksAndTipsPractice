@@ -100,7 +100,7 @@ const generator7 = {
 };
 
 const generator8 = {
-  name: 'Multiply xx by 11',
+  name: 'Multiply xy by 11',
   generator: function(): Question {
     const x = randomNonTrivialTwoDigitFactor();
     return randomMultiplicationOrder(11, x);
@@ -123,7 +123,7 @@ const generator10 = {
 };
 
 const generator11 = {
-  name: 'Multiply xx by 99',
+  name: 'Multiply xy by 99',
   generator: function(): Question {
     const x = randomTwoDigitFactor();
     return randomMultiplicationOrder(99, x);
@@ -131,7 +131,7 @@ const generator11 = {
 };
 
 const generator12 = {
-  name: 'Multiply xx by 101',
+  name: 'Multiply xy by 101',
   generator: function(): Question {
     const x = randomTwoDigitFactor();
     return randomMultiplicationOrder(101, x);
@@ -555,7 +555,7 @@ const generator58 = {
 };
 
 const generator59 = {
-  name: 'Multiply a three digit number by 11',
+  name: 'Multiply xyz by 11',
   generator: function(): Question {
     const x = 101 + randomInt(899);
     return randomMultiplicationOrder(11, x);
