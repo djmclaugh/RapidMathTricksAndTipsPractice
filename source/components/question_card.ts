@@ -27,11 +27,11 @@ function symboleForOperator(operator: Operator): string {
     case Operator.ADDITION:
       return '+';
     case Operator.SUBTRACTION:
-      return '-';
+      return '−';
     case Operator.MULTIPLICATION:
-      return '*';
+      return '×';
     case Operator.DIVISION:
-      return '/';
+      return '÷';
     default:
       return assertNever(operator);
   }

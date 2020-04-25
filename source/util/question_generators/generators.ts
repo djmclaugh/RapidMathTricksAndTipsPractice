@@ -152,7 +152,7 @@ const generator13 = {
 };
 
 const generator14 = {
-  name: 'Check multiplications and divisions',
+  name: 'Check × and ÷',
   generator: generateQuestionForTrick14,
 };
 
@@ -197,7 +197,7 @@ const generator19 = {
 };
 
 const generator20 = {
-  name: 'Same tens and ones add up to 10',
+  name: 'xa × xb where a+b=10',
   generator: function(): Question {
     const tensDigit = (1 + randomInt(9)) * 10;
     const onesDigit = 1 + randomInt(9);
@@ -405,7 +405,7 @@ const generator41 = {
 };
 
 const generator42 = {
-  name: 'Check additions and subtractions',
+  name: 'Check + and -',
   generator: generateQuestionForTrick42,
 };
 
@@ -442,7 +442,7 @@ const generator46 = {
 };
 
 const generator47 = {
-  name: 'Estimate multiplication by 33 or 34',
+  name: 'Estimate × by 33 or 34',
   generator: function(): Question {
     const x = (5 + randomInt(29)) * 3;
     return randomMultiplicationOrderForEstimate(randomFromArray([33, 34]), x, 0.02001);
@@ -450,7 +450,7 @@ const generator47 = {
 };
 
 const generator48 = {
-  name: 'Estimate division by 33 or 34',
+  name: 'Estimate ÷ by 33 or 34',
   generator: function(): Question {
     const x = (4 + randomInt(26));
     return newEstimate(
@@ -463,7 +463,7 @@ const generator48 = {
 };
 
 const generator49 = {
-  name: 'Estimate multiplication by 49 or 51',
+  name: 'Estimate × by 49 or 51',
   generator: function(): Question {
     const x = 11 + randomInt(89);
     return randomMultiplicationOrderForEstimate(randomFromArray([49, 51]), x, 0.02041);
@@ -471,7 +471,7 @@ const generator49 = {
 };
 
 const generator50 = {
-  name: 'Estimate division by 49 or 51',
+  name: 'Estimate ÷ by 49 or 51',
   generator: function(): Question {
     const x = (21 + randomInt(79));
     return newEstimate(
@@ -484,7 +484,7 @@ const generator50 = {
 };
 
 const generator51 = {
-  name: 'Estimate multiplication by 66 or 67',
+  name: 'Estimate × by 66 or 67',
   generator: function(): Question {
     const x = (4 + randomInt(30)) * 3;
     return randomMultiplicationOrderForEstimate(randomFromArray([66, 67]), x, 0.02);
@@ -492,7 +492,7 @@ const generator51 = {
 };
 
 const generator52 = {
-  name: 'Estimate division by 66 or 67',
+  name: 'Estimate ÷ by 66 or 67',
   generator: function(): Question {
     const x = (3 + randomInt(30)) * 2;
     return newEstimate(
@@ -505,7 +505,7 @@ const generator52 = {
 };
 
 const generator53 = {
-  name: 'Estimate division by 9',
+  name: 'Estimate ÷ by 9',
   generator: function(): Question {
     const x = 11 + randomInt(89);
     return newEstimate(x * randomFromArray([1, 10]), 9, Operator.DIVISION, 0.02);
@@ -513,7 +513,7 @@ const generator53 = {
 };
 
 const generator54 = {
-  name: 'Estimate division by 11',
+  name: 'Estimate ÷ by 11',
   generator: function(): Question {
     const x = 11 + randomInt(89);
     return newEstimate(x * randomFromArray([1, 10]), 11, Operator.DIVISION, 0.02);
@@ -521,7 +521,7 @@ const generator54 = {
 };
 
 const generator55 = {
-  name: 'Estimate division by 14',
+  name: 'Estimate ÷ by 14',
   generator: function(): Question {
     const x = randomSimpleFactor();
     return newEstimate(x * randomFromArray([10, 100]), 14, Operator.DIVISION, 0.02);
@@ -529,7 +529,7 @@ const generator55 = {
 };
 
 const generator56 = {
-  name: 'Estimate division by 17',
+  name: 'Estimate ÷ by 17',
   generator: function(): Question {
     const x = randomSimpleFactor();
     return newEstimate(x * randomFromArray([10, 100]), 17, Operator.DIVISION, 0.02);
