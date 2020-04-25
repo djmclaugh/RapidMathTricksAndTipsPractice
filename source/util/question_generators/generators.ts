@@ -50,12 +50,12 @@ function randomMultiplicationOrderForEstimate(a: number, b: number, error: numbe
 }
 
 const generator1 = {
-  name: 'Multiplying and dividing with zeroes',
+  name: 'Extra zeroes',
   generator: generateQuestionForTrick1,
 };
 
 const generator2 = {
-  name: 'Multiplying and dividing with decimal points',
+  name: 'Decimal points',
   generator: generateQuestionForTrick2,
 };
 
@@ -100,7 +100,7 @@ const generator7 = {
 };
 
 const generator8 = {
-  name: 'Multiply 2 digits by 11',
+  name: 'Multiply xx by 11',
   generator: function(): Question {
     const x = randomNonTrivialTwoDigitFactor();
     return randomMultiplicationOrder(11, x);
@@ -123,7 +123,7 @@ const generator10 = {
 };
 
 const generator11 = {
-  name: 'Multiplying a one/two digit number by 99',
+  name: 'Multiply xx by 99',
   generator: function(): Question {
     const x = randomTwoDigitFactor();
     return randomMultiplicationOrder(99, x);
@@ -131,7 +131,7 @@ const generator11 = {
 };
 
 const generator12 = {
-  name: 'Multiplying a one/two digit number by 101',
+  name: 'Multiply xx by 101',
   generator: function(): Question {
     const x = randomTwoDigitFactor();
     return randomMultiplicationOrder(101, x);
@@ -144,7 +144,7 @@ const ROOTS_FOR_TRICK_13: number[] = TRICKY_SQUARE_ROOTS.concat(
   SIMPLE_FACTORS.map((x) => x * 10).filter((x) => !TRICKY_SQUARE_ROOTS.includes(x)),
 );
 const generator13 = {
-  name: 'Multiplying two numbers whose difference is 2',
+  name: 'Product of two numbers 2 apart',
   generator: function(): Question {
     const x = randomFromArray(ROOTS_FOR_TRICK_13);
     return randomMultiplicationOrder(x - 1, x + 1);
@@ -197,9 +197,8 @@ const generator19 = {
 };
 
 const generator20 = {
-  name: 'Multiplying numbers with a special relationship',
+  name: 'Same tens and ones add up to 10',
   generator: function(): Question {
-    // The special relationship is the same tens digit and ones digits that add up to 10.
     const tensDigit = (1 + randomInt(9)) * 10;
     const onesDigit = 1 + randomInt(9);
     return newMultiplication(tensDigit + onesDigit, tensDigit + (10 - onesDigit));
@@ -243,7 +242,7 @@ const generator22 = {
 };
 
 const generator23 = {
-  name: 'Square two digit number starting with a 5',
+  name: 'Squaring 5x',
   generator: function(): Question {
     const x = randomFromArray([51, 52, 53, 54, 55, 56, 57, 58, 59]);
     return newMultiplication(x, x);
@@ -251,7 +250,7 @@ const generator23 = {
 };
 
 const generator24 = {
-  name: 'Square two digit number starting ending a 1',
+  name: 'Squaring x1',
   generator: function(): Question {
     const x = randomFromArray([11, 21, 31, 41, 51, 61, 71, 81, 91]);
     return newMultiplication(x, x);
@@ -272,7 +271,7 @@ const ROOTS_FOR_TRICK_26: number[] = TRICKY_SQUARE_ROOTS.concat(
   SIMPLE_FACTORS.map((x) => x * 10).filter((x) => !TRICKY_SQUARE_ROOTS.includes(x)),
 );
 const generator26 = {
-  name: 'Multiplying two numbers whose difference is 4',
+  name: 'Product of two numbers 4 apart',
   generator: function(): Question {
     const x = randomFromArray(ROOTS_FOR_TRICK_26);
     return randomMultiplicationOrder(x - 2, x + 2);
@@ -361,7 +360,7 @@ const generator36 = {
 };
 
 const generator37 = {
-  name: 'Add a with the "Cross-Out" technique',
+  name: '"Cross-Out" technique (addition)',
   generator: function(): Question {
     return newSum(randomOperands(11, 99, 9));
   },
@@ -556,7 +555,7 @@ const generator58 = {
 };
 
 const generator59 = {
-  name: 'Multiply a three or more digit number by 11',
+  name: 'Multiply a three digit number by 11',
   generator: function(): Question {
     const x = 101 + randomInt(899);
     return randomMultiplicationOrder(11, x);
@@ -576,7 +575,39 @@ const generator60 = {
   },
 };
 
-export const GENERATORS: QuestionGenerator[] = [
+export const BASIC_GENERATORS = {
+  additonTable: (min: number, max: number) => {
+    return {
+      name: `Additon table from ${min} to ${max}`,
+      generator: function(): Question {
+        const a = min + randomInt(max + 1 - min);
+        const b = min + randomInt(max + 1 - min);
+        return newBinaryOperation(a, b, Operator.ADDITION);
+      },
+    };
+  },
+  multiplicationTable: (min: number, max: number) => {
+    return {
+      name: `Times table from ${min} to ${max}`,
+      generator: function(): Question {
+        const a = min + randomInt(max + 1 - min);
+        const b = min + randomInt(max + 1 - min);
+        return newMultiplication(a, b);
+      },
+    };
+  },
+  squares: (min: number, max: number) => {
+    return {
+      name: `Squares from ${min} to ${max}`,
+      generator: function(): Question {
+        const x = min + randomInt(max + 1 - min);
+        return newMultiplication(x, x);
+      },
+    };
+  },
+};
+
+export const TRICK_GENERATORS: QuestionGenerator[] = [
   generator1,
   generator2,
   generator3,

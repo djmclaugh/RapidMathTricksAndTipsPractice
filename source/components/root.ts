@@ -4,12 +4,12 @@ import { QuestionCardComponent } from './question_card';
 import OptionsComponent from './options/options';
 import StatsComponent from './stats';
 import { Question } from '../util/question';
-import { randomInt } from '../util/random_util';
-import { GENERATORS } from '../util/question_generators/generators';
+import { randomFromArray } from '../util/random_util';
+import { QuestionGenerator } from '../util/question_generators/generators';
 
 interface RootComponentData {
   questions: Question[],
-  includedTrickGenerators: Array<() => Question>,
+  questionGenerators: QuestionGenerator[],
   runNumber: number,
   attempts: number,
   successes: number,
@@ -20,7 +20,7 @@ export const RootComponent = Vue.extend({
   data: function(): RootComponentData {
     return {
       questions: [],
-      includedTrickGenerators: [],
+      questionGenerators: [],
       runNumber: 0,
       attempts: 0,
       successes: 0,
@@ -34,20 +34,13 @@ export const RootComponent = Vue.extend({
   },
   methods: {
     createNewQuestion(): Question {
-      const index = randomInt(this.includedTrickGenerators.length);
-      const generator = this.includedTrickGenerators[index];
-      return generator();
+      return randomFromArray(this.questionGenerators).generator();
     },
-    processStart(includeTrick: boolean[]): void {
-      this.includedTrickGenerators = [];
+    processStart(questionGenerators: QuestionGenerator[]): void {
       this.successes = 0;
       this.attempts = 0;
       this.startTime = Date.now();
-      for (let i = 0; i < includeTrick.length; ++i) {
-        if (includeTrick[i]) {
-          this.includedTrickGenerators.push(GENERATORS[i].generator);
-        }
-      }
+      this.questionGenerators = questionGenerators;
       this.questions = [this.createNewQuestion()];
       this.runNumber += 1;
     },
@@ -90,7 +83,7 @@ export const RootComponent = Vue.extend({
       createElement('br'),
       statsElement,
       createElement('br'),
-      createElement('div', questionElements)
+      createElement('div', questionElements),
     ];
     return createElement('div', elements);
   },
