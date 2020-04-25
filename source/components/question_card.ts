@@ -169,8 +169,8 @@ export const QuestionCardComponent = Vue.extend({
             'false',
           ],
           valueDisplayNames: [
-            'Possibly Correct',
-            'Definitly Incorrect',
+            'Maybe Correct',
+            'Incorrect',
           ],
           disabled: this.isSolved,
         },
