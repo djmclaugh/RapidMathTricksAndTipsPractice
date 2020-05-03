@@ -297,7 +297,7 @@ const generator28 = {
   name: 'Multiply numbers just over 100',
   generator: function(): Question {
     const a = 1 + randomInt(12);
-    const b = 1 + randomInt(99 / a);
+    const b = 1 + randomInt((100 / a) - 1);
     return randomMultiplicationOrder(100 + a, 100 + b);
   },
 };
