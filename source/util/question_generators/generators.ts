@@ -288,7 +288,8 @@ const generator26 = {
 const generator27 = {
   name: 'Multiply in two steps',
   generator: function(): Question {
-    return newMultiplication(randomSimpleFactor(), randomFromArray([7, 8, 9, 11, 12]) * 2);
+    const x = randomFromArray([6, 7, 8, 9, 12]);
+    return newMultiplication(x, randomFromArray([7, 8, 9, 11, 12]) * 2);
   },
 };
 
