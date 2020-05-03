@@ -296,9 +296,9 @@ const generator27 = {
 const generator28 = {
   name: 'Multiply numbers just over 100',
   generator: function(): Question {
-    const a = 101 + randomInt(9);
-    const b = 101 + randomInt(9);
-    return newMultiplication(a, b);
+    const a = 1 + randomInt(12);
+    const b = 1 + randomInt(99 / a);
+    return randomMultiplicationOrder(100 + a, 100 + b);
   },
 };
 
