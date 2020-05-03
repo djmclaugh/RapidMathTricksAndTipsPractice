@@ -267,9 +267,16 @@ const generator25 = {
 // For now, we either want a tricky number to square, or an easy number to square that has been
 // multiplied by 10. But like in the book, maybe we want to include numbers that either end in 1s
 // or 5s since the user probably knows tricks 7 and 24.
-const ROOTS_FOR_TRICK_26: number[] = TRICKY_SQUARE_ROOTS.concat(
-  SIMPLE_FACTORS.map((x) => x * 10).filter((x) => !TRICKY_SQUARE_ROOTS.includes(x)),
-);
+const ROOTS_FOR_TRICK_26_SET: Set<number> = new Set();
+// Remove 18 from the list because 16 * 20 can easily be done without the trick.
+TRICKY_SQUARE_ROOTS.filter((x) => x !== 18).forEach((x) => { ROOTS_FOR_TRICK_26_SET.add(x); });
+SIMPLE_FACTORS.map((x) => x * 10).forEach((x) => {
+  ROOTS_FOR_TRICK_26_SET.add(x);
+  ROOTS_FOR_TRICK_26_SET.add(x + 1);
+  ROOTS_FOR_TRICK_26_SET.add(x - 5);
+});
+const ROOTS_FOR_TRICK_26: number[] = Array.from(ROOTS_FOR_TRICK_26_SET);
+
 const generator26 = {
   name: 'Product of two numbers 4 apart',
   generator: function(): Question {
