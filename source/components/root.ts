@@ -1,14 +1,19 @@
 import Vue, { VNode } from 'vue';
 
-import { QuestionCardComponent } from './question_card';
+import QuestionCardComponent from './question_card';
 import OptionsComponent from './options/options';
 import StatsComponent from './stats';
 import { Question } from '../util/question';
 import { randomFromArray } from '../util/random_util';
 import { QuestionGenerator } from '../util/question_generators/generators';
 
+interface QuestionWithOrigin {
+  question: Question,
+  origin: QuestionGenerator,
+}
+
 interface RootComponentData {
-  questions: Question[],
+  questions: QuestionWithOrigin[],
   questionGenerators: QuestionGenerator[],
   runNumber: number,
   attempts: number,
@@ -33,8 +38,13 @@ export const RootComponent = Vue.extend({
     stats: StatsComponent,
   },
   methods: {
-    createNewQuestion(): Question {
-      return randomFromArray(this.questionGenerators).generator();
+    createNewQuestion(): QuestionWithOrigin {
+      const questionGenerator = randomFromArray(this.questionGenerators);
+      const question = questionGenerator.generator();
+      return {
+        question: question,
+        origin: questionGenerator
+      }
     },
     processStart(questionGenerators: QuestionGenerator[]): void {
       this.successes = 0;
@@ -69,7 +79,9 @@ export const RootComponent = Vue.extend({
       const question = this.questions[i];
       questionElements.push(createElement('question-card', {
         props: {
-          question: question,
+          question: question.question,
+          originText: question.origin.name,
+          shouldShowOrigin: this.questionGenerators.length > 1,
           id: i,
         },
         on: {

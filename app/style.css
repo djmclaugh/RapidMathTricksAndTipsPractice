@@ -4,7 +4,7 @@ body {
   background-color: #f9f9f9;
 }
 
-label, input, div {
+label, input, div, p {
   margin: 4px;
 }
 
@@ -38,4 +38,10 @@ input.incorrect {
 
 input.correct {
   border-color: green;
+}
+
+.trick-info {
+  margin-top: 0px;
+  color: dimgray;
+  font-size: smaller;
 }
