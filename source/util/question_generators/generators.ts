@@ -305,9 +305,11 @@ const generator28 = {
 const generator29 = {
   name: 'Subtract by adding',
   generator: function(): Question {
-    const difference = 11 + randomInt(90);
-    const minuend = 1 + randomInt(99 - difference);
-    return newBinaryOperation(minuend + difference, minuend, Operator.SUBTRACTION);
+    const minuendTens = 1 + randomInt(6);
+    const minuendOnes = 1 + randomInt(9);
+    const minuend = (minuendTens * 10) + minuendOnes;
+    const subtrahend = minuend + 10 + randomInt(90 - minuend);
+    return newBinaryOperation(subtrahend, minuend, Operator.SUBTRACTION);
   },
 };
 
