@@ -34,7 +34,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
-    "mocha": "^7.1.1",
+    "mocha": "^10.2.0",
     "typescript": "^3.8.3",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.42.1",
